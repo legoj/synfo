@@ -1,0 +1,402 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="synfo_html.xsl" type="text/xsl" ?>
+<synfo>
+  <refFile path="refSample.xml" />
+  <cmpFile path="cmpSample.xml" />
+  <result>
+    <info id="TJSW8S2X86EN2P">
+      <changedProperties count="1">
+        <p name="OSInfo">
+          <oldValue>Microsoft Windows NT 6.0.6002 Service Pack 2</oldValue>
+          <newValue>Microsoft Windows NT 6.0.6002 Service Pack 3 (ChangedJo)</newValue>
+        </p>
+      </changedProperties>
+      <env.vars>
+        <addedProperties count="1">
+          <p name="PCNAME">NewVars</p>
+        </addedProperties>
+        <removedProperties count="1">
+          <p name="HOMEDRIVE">C:</p>
+        </removedProperties>
+        <changedProperties count="1">
+          <p name="Path">
+            <oldValue>C:\Program Files\Citrix\System32\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Common Files\Citrix\System32\;C:\Program Files\Citrix\System32\Citrix\IMA;C:\Program Files\Citrix\System32\Citrix\IMA\Subsystems;C:\Windows\System32\Citrix\IMA;C:\Program Files\Citrix\system32</oldValue>
+            <newValue>Added;C:\Program Files\Citrix\System32\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Program Files\Common Files\Citrix\System32\;C:\Program Files\Citrix\System32\Citrix\IMA;C:\Program Files\Citrix\System32\Citrix\IMA\Subsystems;C:\Windows\System32\Citrix\IMA;C:\Program Files\Citrix\system32</newValue>
+          </p>
+        </changedProperties>
+      </env.vars>
+    </info>
+    <services>
+      <changedServices count="1">
+        <svc id="AeLookupSvc">
+          <addedProperties count="1">
+            <p name="NewProper">Jo</p>
+          </addedProperties>
+          <removedProperties count="1">
+            <p name="WaitHint">0</p>
+          </removedProperties>
+          <changedProperties count="2">
+            <p name="Name">
+              <oldValue>AeLookupSvc</oldValue>
+              <newValue>AeLookupSvc_Changed</newValue>
+            </p>
+            <p name="ProcessId">
+              <oldValue>1140</oldValue>
+              <newValue>1136</newValue>
+            </p>
+          </changedProperties>
+        </svc>
+      </changedServices>
+      <addedServices count="1">
+        <svc id="ChangedSvcIdAsNew">
+          <AcceptStop>False</AcceptStop>
+          <Caption>Application Layer Gateway Service</Caption>
+          <CheckPoint>0</CheckPoint>
+          <CreationClassName>Win32_Service</CreationClassName>
+          <Description>Provides support for 3rd party protocol plug-ins for Internet Connection Sharing</Description>
+          <DesktopInteract>False</DesktopInteract>
+          <DisplayName>Application Layer Gateway Service</DisplayName>
+          <ErrorControl>Normal</ErrorControl>
+          <ExitCode>1077</ExitCode>
+          <InstallDate />
+          <Name>ALG</Name>
+          <PathName>C:\Windows\System32\alg.exe</PathName>
+          <ProcessId>0</ProcessId>
+          <ServiceSpecificExitCode>0</ServiceSpecificExitCode>
+          <ServiceType>Own Process</ServiceType>
+          <Started>False</Started>
+          <StartMode>Manual</StartMode>
+          <StartName>NT AUTHORITY\LocalService</StartName>
+          <State>Stopped</State>
+          <Status>OK</Status>
+          <SystemCreationClassName>Win32_ComputerSystem</SystemCreationClassName>
+          <SystemName>TJSW8S2X86EN2P</SystemName>
+          <TagId>0</TagId>
+          <WaitHint>0</WaitHint>
+        </svc>
+      </addedServices>
+      <removedServices count="1">
+        <svc id="ALG">
+          <AcceptStop>False</AcceptStop>
+          <Caption>Application Layer Gateway Service</Caption>
+          <CheckPoint>0</CheckPoint>
+          <CreationClassName>Win32_Service</CreationClassName>
+          <Description>Provides support for 3rd party protocol plug-ins for Internet Connection Sharing</Description>
+          <DesktopInteract>False</DesktopInteract>
+          <DisplayName>Application Layer Gateway Service</DisplayName>
+          <ErrorControl>Normal</ErrorControl>
+          <ExitCode>1077</ExitCode>
+          <InstallDate />
+          <Name>ALG</Name>
+          <PathName>C:\Windows\System32\alg.exe</PathName>
+          <ProcessId>0</ProcessId>
+          <ServiceSpecificExitCode>0</ServiceSpecificExitCode>
+          <ServiceType>Own Process</ServiceType>
+          <Started>False</Started>
+          <StartMode>Manual</StartMode>
+          <StartName>NT AUTHORITY\LocalService</StartName>
+          <State>Stopped</State>
+          <Status>OK</Status>
+          <SystemCreationClassName>Win32_ComputerSystem</SystemCreationClassName>
+          <SystemName>TJSW8S2X86EN2P</SystemName>
+          <TagId>0</TagId>
+          <WaitHint>0</WaitHint>
+        </svc>
+      </removedServices>
+    </services>
+    <products>
+      <changedProducts count="5">
+        <app id="{B287C9DA-D7EB-45D2-BA12-4D10479D44F4}">
+          <addedPatches count="1">
+            <patch id="NewPatch">
+              <DisplayName>XAE500W2K8NEW</DisplayName>
+              <InstallDate>20100809</InstallDate>
+              <MoreInfoURL>http://support.citrix.com/article/XAE500W2K8NEW</MoreInfoURL>
+              <State>1</State>
+              <LocalPackage>C:\Windows\Installer\3a184e.msp</LocalPackage>
+              <Transforms>:TargetMFToUpgradedMF;:#TargetMFToUpgradedMF</Transforms>
+              <reg.info id="XAE500W2K8NEW">
+                <DisplayName>Citrix Hotfix Rollup Pack XAE500W2K8NEW</DisplayName>
+                <HelpLink>http://support.citrix.com/article/CTX125414</HelpLink>
+                <NoModify>1</NoModify>
+                <NoRepair>1</NoRepair>
+                <Publisher>Citrix Systems, Inc.</Publisher>
+                <UninstallString>C:\Program Files\Common Files\Citrix\System32\CPatch.exe /u {E08D9FD4-69FF-F565-571F-245F8012A7B7}</UninstallString>
+                <URLInfoAbout>http://www.citrix.com</URLInfoAbout>
+                <URLUpdateInfo>http://support.citrix.com</URLUpdateInfo>
+              </reg.info>
+            </patch>
+          </addedPatches>
+          <removedPatches count="1">
+            <patch id="RemovedPatch">
+              <DisplayName>RemovedPatch</DisplayName>
+              <InstallDate>20100809</InstallDate>
+              <MoreInfoURL>http://support.citrix.com/article/RemovedPatch</MoreInfoURL>
+              <State>1</State>
+              <LocalPackage>C:\Windows\Installer\3a184e.msp</LocalPackage>
+              <Transforms>:TargetMFToUpgradedMF;:#TargetMFToUpgradedMF</Transforms>
+              <reg.info id="RemovedPatch">
+                <DisplayName>Citrix Hotfix Rollup Pack RemovedPatch</DisplayName>
+                <HelpLink>http://support.citrix.com/article/CTX125414</HelpLink>
+                <NoModify>1</NoModify>
+                <NoRepair>1</NoRepair>
+                <Publisher>Citrix Systems, Inc.</Publisher>
+                <UninstallString>C:\Program Files\Common Files\Citrix\System32\CPatch.exe /u {E08D9FD4-69FF-F565-571F-245F8012A7B7}</UninstallString>
+                <URLInfoAbout>http://www.citrix.com</URLInfoAbout>
+                <URLUpdateInfo>http://support.citrix.com</URLUpdateInfo>
+              </reg.info>
+            </patch>
+          </removedPatches>
+          <changedPatches count="1">
+            <patch id="{E08D9FD4-69FF-F565-571F-2419kd9397B7}">
+              <changedProperties count="2">
+                <p name="MoreInfoURL">
+                  <oldValue>http://support.citrix.com/article/CTX125414</oldValue>
+                  <newValue>http://support.citrix.com/article/CTX125414_Changed</newValue>
+                </p>
+                <p name="State">
+                  <oldValue>1</oldValue>
+                  <newValue>0</newValue>
+                </p>
+              </changedProperties>
+            </patch>
+          </changedPatches>
+        </app>
+        <app id="{2E6DA10B-BE83-438E-BB49-1A705C1569A1}">
+          <changedProperties count="1">
+            <p name="Publisher">
+              <oldValue>Citrix Systems, Inc.</oldValue>
+              <newValue>Citrix Systems, Inc. Added String</newValue>
+            </p>
+          </changedProperties>
+        </app>
+        <app id="{388C130B-0079-46B4-A0D5-DC2DD7A89A7B}">
+          <reg.info id="{388C130B-0079-46B4-A0D5-DC2DD7A89A7B}">
+            <changedProperties count="1">
+              <p name="DisplayName">
+                <oldValue>Citrix XenApp Plugin for Hosted Apps</oldValue>
+                <newValue>Citrix XenApp Plugin for Hosted Apps Added String</newValue>
+              </p>
+            </changedProperties>
+          </reg.info>
+        </app>
+        <app id="{E331621B-E9E1-404D-820C-F7AFCB4052CC}">
+          <addedProperties count="1">
+            <p name="HelpTelephone_ChangedPropName" />
+          </addedProperties>
+          <removedProperties count="1">
+            <p name="HelpTelephone" />
+          </removedProperties>
+        </app>
+        <app id="{7299052b-02a4-4627-81f2-1818da5d550d}">
+          <reg.info id="{7299052b-02a4-4627-81f2-1818da5d550d}">
+            <changedProperties count="1">
+              <p name="Publisher">
+                <oldValue>Microsoft Corporation</oldValue>
+                <newValue>Microsoft Corporation_ChangedSubPropName</newValue>
+              </p>
+            </changedProperties>
+          </reg.info>
+        </app>
+      </changedProducts>
+      <addedProducts count="1">
+        <app id="NewApp">
+          <ProductName>Microsoft Visual C++ 2005 Redistributable</ProductName>
+          <VersionString>8.0.50727.42</VersionString>
+          <InstallDate>20100531</InstallDate>
+          <Publisher>Microsoft Corporation</Publisher>
+          <URLInfoAbout />
+          <InstallLocation />
+          <InstallSource>C:\Users\ADMINI~1\AppData\Local\Temp\1\IXP000.TMP\</InstallSource>
+          <PackageName>vcredist.msi</PackageName>
+          <HelpLink />
+          <HelpTelephone />
+          <reg.info id="NewApp">
+            <AuthorizedCDFPrefix />
+            <Comments />
+            <Contact />
+            <DisplayVersion>8.0.50727.42</DisplayVersion>
+            <HelpLink />
+            <HelpTelephone />
+            <InstallDate>20100531</InstallDate>
+            <InstallLocation />
+            <InstallSource>C:\Users\ADMINI~1\AppData\Local\Temp\1\IXP000.TMP\</InstallSource>
+            <ModifyPath>MsiExec.exe /X{A49F249F-0C91-497F-86DF-B2585E8E76B7}</ModifyPath>
+            <NoModify>1</NoModify>
+            <NoRepair>1</NoRepair>
+            <Publisher>Microsoft Corporation</Publisher>
+            <Readme />
+            <Size />
+            <EstimatedSize>2434</EstimatedSize>
+            <UninstallString>MsiExec.exe /X{A49F249F-0C91-497F-86DF-B2585E8E76B7}</UninstallString>
+            <URLInfoAbout />
+            <URLUpdateInfo />
+            <VersionMajor>8</VersionMajor>
+            <VersionMinor>0</VersionMinor>
+            <WindowsInstaller>1</WindowsInstaller>
+            <Version>134268455</Version>
+            <Language>0</Language>
+            <DisplayName>Microsoft Visual C++ 2005 Redistributable</DisplayName>
+          </reg.info>
+        </app>
+      </addedProducts>
+      <removedProducts count="4">
+        <app id="{1BF1C0D3-EC36-4547-B383-272B0D816B19}">
+          <ProductName>Citrix Access Management Console - Hotfix Management</ProductName>
+          <VersionString>4.8.0.0</VersionString>
+          <InstallDate>20100531</InstallDate>
+          <Publisher>Citrix Systems</Publisher>
+          <URLInfoAbout />
+          <InstallLocation />
+          <InstallSource>D:\Administration\Access Management Console\Setup\</InstallSource>
+          <PackageName>ASC_HotfixManagement.msi</PackageName>
+          <HelpLink />
+          <HelpTelephone />
+          <reg.info id="{1BF1C0D3-EC36-4547-B383-272B0D816B19}">
+            <AuthorizedCDFPrefix />
+            <Comments />
+            <Contact />
+            <DisplayVersion>4.8.0.0</DisplayVersion>
+            <HelpLink />
+            <HelpTelephone />
+            <InstallDate>20100531</InstallDate>
+            <InstallLocation />
+            <InstallSource>D:\Administration\Access Management Console\Setup\</InstallSource>
+            <NoRemove>1</NoRemove>
+            <Publisher>Citrix Systems</Publisher>
+            <Readme />
+            <Size />
+            <EstimatedSize>4715</EstimatedSize>
+            <SystemComponent>1</SystemComponent>
+            <URLInfoAbout />
+            <URLUpdateInfo />
+            <VersionMajor>4</VersionMajor>
+            <VersionMinor>8</VersionMinor>
+            <WindowsInstaller>1</WindowsInstaller>
+            <Version>67633152</Version>
+            <Language>1033</Language>
+            <DisplayName>Citrix Access Management Console - Hotfix Management</DisplayName>
+          </reg.info>
+        </app>
+        <app id="{68FB9CE3-4AAE-4E30-A15D-A285B3DCF405}">
+          <ProductName>Citrix Web Interface</ProductName>
+          <VersionString>5.0.1</VersionString>
+          <InstallDate>20100531</InstallDate>
+          <Publisher>Citrix Systems, Inc.</Publisher>
+          <URLInfoAbout>http://www.citrix.com</URLInfoAbout>
+          <InstallLocation />
+          <InstallSource>C:\Users\Administrator\AppData\Local\Temp\1\WITemp.0\</InstallSource>
+          <PackageName>final.0.msi</PackageName>
+          <HelpLink />
+          <HelpTelephone />
+          <reg.info id="{68FB9CE3-4AAE-4E30-A15D-A285B3DCF405}">
+            <DisplayIcon>C:\Program Files\Citrix\Web Interface\5.0.1\wi_install_msi.ico</DisplayIcon>
+            <AuthorizedCDFPrefix />
+            <Comments>5.0.1.29110 
+</Comments>
+            <Contact />
+            <DisplayVersion>5.0.1</DisplayVersion>
+            <HelpLink />
+            <HelpTelephone />
+            <InstallDate>20100531</InstallDate>
+            <InstallLocation />
+            <InstallSource>C:\Users\Administrator\AppData\Local\Temp\1\WITemp.0\</InstallSource>
+            <ModifyPath>MsiExec.exe /X{68FB9CE3-4AAE-4E30-A15D-A285B3DCF405}</ModifyPath>
+            <NoModify>1</NoModify>
+            <NoRepair>1</NoRepair>
+            <Publisher>Citrix Systems, Inc.</Publisher>
+            <Readme />
+            <Size />
+            <EstimatedSize>112334</EstimatedSize>
+            <UninstallString>MsiExec.exe /X{68FB9CE3-4AAE-4E30-A15D-A285B3DCF405}</UninstallString>
+            <URLInfoAbout>http://www.citrix.com</URLInfoAbout>
+            <URLUpdateInfo />
+            <VersionMajor>5</VersionMajor>
+            <VersionMinor>0</VersionMinor>
+            <WindowsInstaller>1</WindowsInstaller>
+            <Version>83886081</Version>
+            <Language>0</Language>
+            <DisplayName>Citrix Web Interface</DisplayName>
+          </reg.info>
+        </app>
+        <app id="{43F71BAA-105A-499E-998C-01143577C8FA}">
+          <ProductName>XenApp Advanced Configuration</ProductName>
+          <VersionString>5.0.0</VersionString>
+          <InstallDate>20100531</InstallDate>
+          <Publisher>Citrix Systems, Inc.</Publisher>
+          <URLInfoAbout />
+          <InstallLocation />
+          <InstallSource>D:\Administration\XenApp Advanced Configuration\</InstallSource>
+          <PackageName>CMC.msi</PackageName>
+          <HelpLink />
+          <HelpTelephone />
+          <reg.info id="{43F71BAA-105A-499E-998C-01143577C8FA}">
+            <AuthorizedCDFPrefix />
+            <Comments />
+            <Contact />
+            <DisplayVersion>5.0.0</DisplayVersion>
+            <HelpLink />
+            <HelpTelephone />
+            <InstallDate>20100531</InstallDate>
+            <InstallLocation />
+            <InstallSource>D:\Administration\XenApp Advanced Configuration\</InstallSource>
+            <ModifyPath>MsiExec.exe /X{43F71BAA-105A-499E-998C-01143577C8FA}</ModifyPath>
+            <NoModify>1</NoModify>
+            <Publisher>Citrix Systems, Inc.</Publisher>
+            <Readme />
+            <Size />
+            <EstimatedSize>5109</EstimatedSize>
+            <UninstallString>MsiExec.exe /X{43F71BAA-105A-499E-998C-01143577C8FA}</UninstallString>
+            <URLInfoAbout />
+            <URLUpdateInfo />
+            <VersionMajor>5</VersionMajor>
+            <VersionMinor>0</VersionMinor>
+            <WindowsInstaller>1</WindowsInstaller>
+            <Version>83886080</Version>
+            <Language>1033</Language>
+            <DisplayName>XenApp Advanced Configuration</DisplayName>
+          </reg.info>
+        </app>
+        <app id="{A49F249F-0C91-497F-86DF-B2585E8E76B7}">
+          <ProductName>Microsoft Visual C++ 2005 Redistributable</ProductName>
+          <VersionString>8.0.50727.42</VersionString>
+          <InstallDate>20100531</InstallDate>
+          <Publisher>Microsoft Corporation</Publisher>
+          <URLInfoAbout />
+          <InstallLocation />
+          <InstallSource>C:\Users\ADMINI~1\AppData\Local\Temp\1\IXP000.TMP\</InstallSource>
+          <PackageName>vcredist.msi</PackageName>
+          <HelpLink />
+          <HelpTelephone />
+          <reg.info id="{A49F249F-0C91-497F-86DF-B2585E8E76B7}">
+            <AuthorizedCDFPrefix />
+            <Comments />
+            <Contact />
+            <DisplayVersion>8.0.50727.42</DisplayVersion>
+            <HelpLink />
+            <HelpTelephone />
+            <InstallDate>20100531</InstallDate>
+            <InstallLocation />
+            <InstallSource>C:\Users\ADMINI~1\AppData\Local\Temp\1\IXP000.TMP\</InstallSource>
+            <ModifyPath>MsiExec.exe /X{A49F249F-0C91-497F-86DF-B2585E8E76B7}</ModifyPath>
+            <NoModify>1</NoModify>
+            <NoRepair>1</NoRepair>
+            <Publisher>Microsoft Corporation</Publisher>
+            <Readme />
+            <Size />
+            <EstimatedSize>2434</EstimatedSize>
+            <UninstallString>MsiExec.exe /X{A49F249F-0C91-497F-86DF-B2585E8E76B7}</UninstallString>
+            <URLInfoAbout />
+            <URLUpdateInfo />
+            <VersionMajor>8</VersionMajor>
+            <VersionMinor>0</VersionMinor>
+            <WindowsInstaller>1</WindowsInstaller>
+            <Version>134268455</Version>
+            <Language>0</Language>
+            <DisplayName>Microsoft Visual C++ 2005 Redistributable</DisplayName>
+          </reg.info>
+        </app>
+      </removedProducts>
+    </products>
+  </result>
+</synfo>
