@@ -258,7 +258,7 @@ Class MSIProducts
                 Next
                 'WriteProdInfo(product, prodProps)
                 app.Key = product
-                Dim colPatches = objWI.PatchesEx(product, "s-1-1-0", 7, 7)
+                Dim colPatches = objWI.PatchesEx(product, "", 4, 15)
                 If colPatches.Count > 0 Then
                     Log("Found " & colPatches.Count & " patch/es")
                     Dim patches = New SysObjects
