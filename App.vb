@@ -34,12 +34,7 @@ Module App
     Public Const _OBAPP As String = "app"
     Public Const _OBDRV As String = "drv"
     Public Const _OBPAT As String = "patch"
-    Sub Main2()
-        Dim fvi = FileVersionInfo.GetVersionInfo("C:\Windows\system32\drivers\3ware.sys").FileVersion
-        Console.WriteLine(fvi)
-        Dim fv = fvi.Split({" "c})(0)
-        Console.WriteLine(fv)
-    End Sub
+
     Sub Main(args As String())
 
         If args.Length > 0 Then
