@@ -5,7 +5,7 @@ Imports System.Management
 Imports System.IO
 Imports Microsoft.Win32
 Imports System.Runtime.InteropServices
-Imports System.Collections.Specialized
+Imports System.Data.Odbc
 
 
 Module App
@@ -13,7 +13,6 @@ Module App
     Const _PATH As String = "path"
     Const _FREF As String = "refFile"
     Const _FCMP As String = "cmpFile"
-
 
     Public Const _SYNFO As String = "synfo"
     Public Const _ELNFO As String = "info"
@@ -33,16 +32,15 @@ Module App
     Public Const _OBSVC As String = "svc"
     Public Const _OBQFE As String = "qfe"
     Public Const _OBAPP As String = "app"
+    Public Const _OBDRV As String = "drv"
     Public Const _OBPAT As String = "patch"
     Sub Main2()
-        Dim value As StringCollection
-        value = My.Settings.SVCPROPS
-        For Each s As String In value
-
-            Console.WriteLine(s)
-        Next
+        Dim fvi = FileVersionInfo.GetVersionInfo("C:\Windows\system32\drivers\3ware.sys").FileVersion
+        Console.WriteLine(fvi)
+        Dim fv = fvi.Split({" "c})(0)
+        Console.WriteLine(fv)
     End Sub
-    Sub Main(ByVal args As String())
+    Sub Main(args As String())
 
         If args.Length > 0 Then
             If args(0).Equals("/?") Or args(0).Equals("?") Or args(0).Equals("-help", StringComparison.CurrentCultureIgnoreCase) Then
@@ -90,9 +88,22 @@ Module App
             Dim xmlCmp = New XmlDocument()
             xmlRef.Load(sXmlRef)
             xmlCmp.Load(sXmlCmp)
-            Dim outPath = GetAppPath() & "\synfoCompareResult.xml"
-            Dim xmlResult = New XmlTextWriter(outPath, Text.Encoding.UTF8)
-            With xmlResult
+
+            Dim rSyn = New Synfo
+            Dim cSyn = New Synfo
+            rSyn.Parse(xmlRef.DocumentElement)
+            cSyn.Parse(xmlCmp.DocumentElement)
+
+            Dim sCmp = New CmpResult
+            rSyn.Compare(cSyn, sCmp)
+
+            Dim rHos = rSyn.SynInfo.Id
+            Dim cHos = cSyn.SynInfo.Id
+            Dim sAct = If(rHos.Equals(cHos, StringComparison.CurrentCultureIgnoreCase), "diff", "xcmp")
+
+            Dim resPth = GetAppPath() & "\synRes_" & sAct & "_" & DateTime.Now.ToString("yyyyMMddHHmmss") & ".xml"
+            Dim xmlRes = New XmlTextWriter(resPth, Text.Encoding.UTF8)
+            With xmlRes
                 .Formatting = Formatting.Indented
                 .WriteStartDocument()
                 If Not IsNothing(xslPath) Then .WriteProcessingInstruction("xml-stylesheet", "type='text/xsl' href='" & xslPath & "'")
@@ -103,73 +114,86 @@ Module App
                 .WriteStartElement(_FCMP)
                 .WriteAttributeString(_PATH, sXmlCmp)
                 .WriteEndElement()
-
-
-                Dim rSyn = New Synfo
-                Dim cSyn = New Synfo
-                rSyn.Parse(xmlRef.DocumentElement)
-                cSyn.Parse(xmlCmp.DocumentElement)
-                Dim sCmp = New CmpResult
-                rSyn.Compare(cSyn, sCmp)
-                sCmp.ToXml(xmlResult)
-                Console.WriteLine("Synfo comparison result: " & outPath)
+                sCmp.ToXml(xmlRes)
                 .WriteEndDocument()
                 .Close()
             End With
+            Console.WriteLine("Synfo comparison result: " & resPth)
         Else
             Console.WriteLine("The specified filepath does not exist!")
         End If
     End Sub
-
-
 
     Function DumpObjects() As String
 
         Dim outXml = GetAppPath()
         outXml = outXml & "\" & _SYNFO & "_" & Environment.MachineName & "_" & DateTime.Now.ToString("yyyyMMddHHmmss") & ".xml"
 
-        Dim svc = New Services()
         Console.WriteLine("Reading Win32_Service")
-        svc.Read()
+        Dim svcQuery = "SELECT {0} FROM Win32_Service"
+        Dim svcProps = "AcceptStop,Caption,CheckPoint,CreationClassName,Description,DesktopInteract,DisplayName,ErrorControl,ExitCode,InstallDate,Name,PathName,ProcessId,ServiceSpecificExitCode,ServiceType,Started,StartMode,StartName,State,Status,SystemCreationClassName,SystemName,TagId,WaitHint"
+        svcQuery = String.Format(svcQuery, svcProps)
+        Dim svc = New WMIObjects(_ELSVC, _OBSVC, "Name", svcQuery)
+        svc.ReadObjects()
 
-        Dim app = New MSIProducts()
-        Console.WriteLine("Getting Products list thru WindowsInstaller API")
-        app.Read()
+        Console.WriteLine("Reading Win32_QuickFixEngineering")
+        Dim qfeQuery = "SELECT {0} FROM Win32_QuickFixEngineering"
+        Dim qfeProps = "Caption,CSName,Description,HotFixID,InstalledBy,InstalledOn"
+        qfeQuery = String.Format(qfeQuery, qfeProps)
+        Dim qfe = New WMIObjects(_ELHFX, _OBQFE, "HotfixID", qfeQuery)
+        qfe.ReadObjects()
 
-        Dim rapp = New RegProducts
-        Console.WriteLine("Getting Products on Registry uninstall node")
-        rapp.Read()
+        Console.WriteLine("Reading WindowsInstaller.Products")
+        Dim prodProps = New String() {"ProductName", "VersionString", "InstallDate", "Publisher", "URLInfoAbout", "InstallLocation", "InstallSource", "PackageName"}
+        Dim patchProps = New String() {"DisplayName", "InstallDate", "MoreInfoURL", "State", "LocalPackage", "Transforms", "Uninstallable"}
+        Dim app = New MSIProducts(prodProps, patchProps)
+        app.ReadObjects()
 
-        Dim qfe = New WMIQFEs
-        Console.WriteLine("Getting QFE list via WMI")
-        qfe.Read()
+        Console.WriteLine("Reading Registry.ARP Uninstall Node")
+        Dim arp = New RegProducts
+        arp.ReadObjects()
 
+        Console.WriteLine("Reading Win32_SystemDriver")
+        Dim drvQuery = "SELECT {0} FROM Win32_SystemDriver"
+        Dim drvProps = "AcceptPause,AcceptStop,Caption,Description,DesktopInteract,DisplayName,ErrorControl,ExitCode,Name,PathName,ServiceSpecificExitCode,ServiceType,Started,StartMode,StartName,State,Status,TagId"
+        drvQuery = String.Format(drvQuery, drvProps)
+        Dim drv = New WMIObjects(_ELDRV, _OBDRV, "Name", drvQuery)
+        drv.ReadObjects()
+        For Each k In drv.Keys
+            Dim dObj = drv.GetObj(k)
+            Dim fPth = dObj.Value("PathName")
+            If File.Exists(fPth) Then
+                Dim fv = FileVersionInfo.GetVersionInfo(fPth).FileVersion
+                If Not IsNothing(fv) Then
+                    dObj.Add("Version", fv.Split({" "c})(0))
+                End If
+            End If
+        Next
+
+
+        Console.WriteLine("Generating XML output file")
         Dim w As XmlTextWriter
         w = New XmlTextWriter(outXml, Text.Encoding.UTF8)
         w.Formatting = Formatting.Indented
         w.WriteStartDocument()
-        'w.WriteProcessingInstruction("xml", "version='1.0' encoding='UTF-8'")
-
         w.WriteStartElement(_SYNFO)
 
         Console.WriteLine("Writing System Info data")
         WriteInfo(w)
 
+        'services
+        svc.WriteXML(w)
 
-        w.WriteStartElement(_ELSVC)
-        w.WriteAttributeString(_ATCNT, svc.Count)
-        For Each s As String In svc.Keys
-            svc.GetObj(s).WriteXML(_OBSVC, w)
-        Next
-        w.WriteEndElement()
-
+        'products
         w.WriteStartElement(_ELPRD)
         w.WriteAttributeString(_ATCNT, app.Count)
         For Each s As String In app.Keys
             app.GetObj(s).WriteXML(_OBAPP, w, False)
-            If rapp.Has(s) Then
-                rapp.GetObj(s).WriteXML(_ELREG, w)
+            'arp.reginfo
+            If arp.Has(s) Then
+                arp.GetObj(s).WriteXML(_ELREG, w)
             End If
+            'patches
             If app.HasPatches(s) Then
                 Dim patches = app.GetPatches(s)
                 w.WriteStartElement(_ELPAT)
@@ -178,9 +202,8 @@ Module App
                     Dim patch = patches.GetObj(z)
                     Dim dName = patch.Value("DisplayName")
                     patch.WriteXML(_OBPAT, w, False, _ANAME, dName)
-
-                    If rapp.Has(dName) Then
-                        rapp.GetObj(dName).WriteXML(_ELREG, w)
+                    If arp.Has(dName) Then
+                        arp.GetObj(dName).WriteXML(_ELREG, w)
                     End If
                     w.WriteEndElement()
                 Next
@@ -190,12 +213,11 @@ Module App
         Next
         w.WriteEndElement()
 
-        w.WriteStartElement(_ELHFX)
-        w.WriteAttributeString(_ATCNT, qfe.Count)
-        For Each s As String In qfe.Keys
-            qfe.GetObj(s).WriteXML(_OBQFE, w)
-        Next
-        w.WriteEndElement()
+        'hotfixes
+        qfe.WriteXML(w)
+
+        'drivers
+        drv.WriteXML(w)
 
         w.WriteEndElement()
         w.WriteEndDocument()
@@ -203,24 +225,21 @@ Module App
 
         DumpObjects = outXml
     End Function
+
+
     Function GetAppPath() As String
-        'Return System.IO.Path.GetDirectoryName(
-        'System.Reflection.Assembly.GetExecutingAssembly().Location)
-        Return System.Environment.CurrentDirectory
+        Return My.Application.Info.DirectoryPath
     End Function
 
-    Sub WriteDic(ByVal sType As String, ByVal elName As String, ByRef writer As XmlTextWriter, ByRef dic As Hashtable)
-
-        With writer
-            .WriteStartElement(sType)
-            For Each k As String In dic.Keys
-                .WriteStartElement(elName)
-                .WriteAttributeString(_ANAME, k)
-                .WriteString(dic.Item(k).ToString())
-                .WriteEndElement()
-            Next
-            .WriteEndElement()
-        End With
+    Sub WriteDic(sType As String, elName As String, ByRef writer As XmlTextWriter, ByRef dic As Hashtable)
+        writer.WriteStartElement(sType)
+        For Each k As String In dic.Keys
+            writer.WriteStartElement(elName)
+            writer.WriteAttributeString(_ANAME, k)
+            writer.WriteString(dic.Item(k).ToString())
+            writer.WriteEndElement()
+        Next
+        writer.WriteEndElement()
     End Sub
 
     Sub WriteInfo(ByRef w As XmlTextWriter)
@@ -257,16 +276,17 @@ Class MSIProducts
     Dim prodProps As String()
     Dim patchProps As String()
     Dim objWI
-    Public Sub New()
-        prodProps = New String() {"ProductName", "VersionString", "InstallDate", "Publisher", "URLInfoAbout",
-            "InstallLocation", "InstallSource", "PackageName"}
-        patchProps = New String() {"DisplayName", "InstallDate", "MoreInfoURL", "State", "LocalPackage", "Transforms"}
+    Public Sub New(prdProps As String(), pchProps As String())
+        MyBase.New(_ELPRD, _OBAPP)
+        Me.prodProps = prdProps
+        Me.patchProps = pchProps
         objWI = CreateObject("WindowsInstaller.Installer")
         dPatches = New Dictionary(Of String, SysObjects)
     End Sub
     Public Sub AddPatches(ByVal pName As String, ByRef objPats As SysObjects)
         dPatches.Add(pName, objPats)
     End Sub
+
     Public Function HasPatches(ByVal prodKey As String) As Boolean
         HasPatches = dPatches.ContainsKey(prodKey)
     End Function
@@ -276,7 +296,7 @@ Class MSIProducts
     Public Function GetPatchKeys() As ICollection(Of String)
         GetPatchKeys = dPatches.Keys
     End Function
-    Public Overloads Function Read() As Boolean
+    Public Overrides Sub ReadObjects()
         Log("Reading Products thru Windows Installer API")
         Dim colProducts = objWI.Products
         If colProducts.Count > 0 Then
@@ -284,7 +304,7 @@ Class MSIProducts
             For Each product In colProducts
                 Log("Product: " & product)
                 'Log(product & ".State" = objWI.ProductState(product))
-                Dim app = New ObjectInfo
+                Dim app = New ObjectInfo(product)
                 For Each p In prodProps
                     Dim pVal = String.Empty
                     Try
@@ -296,37 +316,43 @@ Class MSIProducts
                     Log(product & "." & p & " = " & pVal)
                 Next
 
-                'WriteProdInfo(product, prodProps)
-                app.Key = product
-
-                'Dim colPatches = objWI.PatchesEx(product, "s-1-1-0", 7, 7)
                 Dim colPatches = objWI.PatchesEx(product, "", 4, 15)
                 If colPatches.Count > 0 Then
                     Log("Found " & colPatches.Count & " patch/es")
-                    Dim patches = New SysObjects
-                    For Each patch In colPatches
-                        Dim pObj = New ObjectInfo
-                        pObj.Key = patch.PatchCode
-                        'On Error Resume Next
-                        Log("Patch:  " & pObj.Key)
-                        For Each q In patchProps
-                            Log("Setting property: " & q)
-                            Try
-                                pObj.Add(q, patch.PatchProperty(q))
-                            Catch ce As COMException
-                                Log("COMError: " & ce.Message & " -- Property: " & q)
-                            End Try
-                        Next
-
-                        patches.AddObj(pObj)
-                    Next
+                    Dim patches = New AppPatches(colPatches, patchProps)
+                    patches.ReadObjects()
                     dPatches.Add(product, patches)
                 End If
                 AddObj(app)
             Next
         End If
-        Return True
-    End Function
+    End Sub
+End Class
+
+Class AppPatches
+    Inherits SysObjects
+    Private objPatches As Object
+    Private patchProps As String()
+    Public Sub New(patches As Object, props As String())
+        MyBase.New(_ELPAT, _OBPAT)
+        Me.objPatches = patches
+        Me.patchProps = props
+    End Sub
+    Public Overrides Sub ReadObjects()
+        For Each patch In objPatches
+            Dim pObj = New ObjectInfo(patch.PatchCode)
+            For Each pNam In patchProps
+                Dim pVal = ""
+                Try
+                    pVal = patch.PatchProperty(pNam)
+                Catch ce As COMException
+                    Log("COMError: " & ce.Message & " -- Setting property: " & pNam & " to empty string")
+                End Try
+                pObj.Add(pNam, pVal)
+            Next
+            AddObj(pObj)
+        Next
+    End Sub
 End Class
 
 Class RegProducts
@@ -335,11 +361,15 @@ Class RegProducts
     Public Const RKEY32 = "SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\"
     Public Const HKLM = &H80000002
 
-    Public Overloads Function Read() As Boolean
+    Public Sub New()
+        MyBase.New(_ELREG, _ELREG)
+    End Sub
+
+    Public Overrides Sub ReadObjects()
         ReadRegs(RKEY64)
         ReadRegs(RKEY32)
-        Read = True
-    End Function
+    End Sub
+
     Private Sub ReadRegs(ByVal rKey As String)
         Dim appKeys = Registry.LocalMachine.OpenSubKey(rKey, False)
         Log("Reading subKey: " & rKey)
@@ -347,8 +377,7 @@ Class RegProducts
             Dim subKey = appKeys.OpenSubKey(appKey, False)
             Dim dName = subKey.GetValue("DisplayName", "").ToString()
             If dName <> "" Then
-                Dim app = New ObjectInfo
-                app.Key = appKey
+                Dim app = New ObjectInfo(appKey)
                 Log("Adding App: " & appKey)
                 For Each p In subKey.GetValueNames
                     If (p.Trim() <> "") Then
@@ -361,72 +390,57 @@ Class RegProducts
         Next
         appKeys.Close()
     End Sub
-
 End Class
 
-Class WMIQFEs
+Class WMIObjects
     Inherits SysObjects
-    Public Overloads Function Read() As Boolean
-        Dim PROPS(My.Settings.QFEPROPS.Count) As String
-        My.Settings.QFEPROPS.CopyTo(PROPS, 0)
-        Read = MyBase.Read("SELECT * FROM Win32_QuickFixEngineering", "HotfixID", PROPS)
-    End Function
-End Class
-Class WMIProducts
-    Inherits SysObjects
-    Public Overloads Function Read() As Boolean
-        Dim PROPS(My.Settings.PRDPROPS.Count) As String
-        My.Settings.PRDPROPS.CopyTo(PROPS, 0)
-        Read = MyBase.Read("SELECT * FROM Win32_Product", "IdentifyingNumber", PROPS)
-    End Function
-End Class
-Class Services
-    Inherits SysObjects
-    Public Overloads Function Read() As Boolean
-        Dim PROPS(My.Settings.SVCPROPS.Count) As String
-        My.Settings.SVCPROPS.CopyTo(PROPS, 0)
-        Read = MyBase.Read("SELECT * FROM Win32_Service", "Name", PROPS)
-    End Function
-End Class
-
-Class SysObjects
-    Private dObjs As Dictionary(Of String, ObjectInfo)
-    Public Sub New()
-        dObjs = New Dictionary(Of String, ObjectInfo)
+    Private ReadOnly keyProp As String
+    Private ReadOnly wmiQuery As String
+    Public Sub New(grpName As String, objName As String, keyName As String, queryStr As String)
+        MyBase.New(grpName,objName)
+        keyProp = keyName
+        wmiQuery = queryStr
     End Sub
-    Public Function Read(ByVal queryParam As String, ByVal keyPropName As String, ByVal propNames As ICollection(Of String)) As Boolean
-        Dim oColl = GetObjects(queryParam)
-        For Each sObj As ManagementObject In oColl
-            Dim oNfo = New ObjectInfo
-            With oNfo
-                .Key = sObj(keyPropName)
-                On Error Resume Next
-                For Each s As String In propNames
-                    .Add(s, sObj(s))
-                Next
-            End With
-            dObjs.Add(oNfo.Key, oNfo)
-        Next
 
-        Read = True
-    End Function
+    Public Overrides Sub ReadObjects()
+        Log("Reading WMI objects...")
+        Dim query As ManagementObjectSearcher
+        Dim queryCollection As ManagementObjectCollection
+        Dim msc As ManagementScope = New ManagementScope("\\.\root\cimv2")
+        Dim select_query As SelectQuery = New SelectQuery(wmiQuery)
+        query = New ManagementObjectSearcher(msc, select_query)
+        queryCollection = query.Get()
+        For Each sObj As ManagementObject In queryCollection
+            Dim keyF = sObj.Properties.Item(keyProp).Value
+            Dim oNfo = New ObjectInfo(keyF)
+            On Error Resume Next
+            Log("WMIObject: " & keyF)
+            For Each p As PropertyData In sObj.Properties
+                oNfo.Add(p.Name, p.Value)
+            Next
+            AddObj(oNfo)
+        Next
+    End Sub
+End Class
+
+MustInherit Class SysObjects
+    Public ReadOnly Property GroupName As String
+    Public ReadOnly Property EntryName As String
+    Private dObjs As Dictionary(Of String, Object)
+    Public Sub New(grpName As String, objName As String)
+        Me.GroupName = grpName
+        Me.EntryName = objName
+        dObjs = New Dictionary(Of String, Object)
+    End Sub
+
+    Public MustOverride Sub ReadObjects()
+
     Public Sub AddObj(ByVal objInfo As ObjectInfo)
-        dObjs.Add(objInfo.Key, objInfo)
+        dObjs.Add(objInfo.Id, objInfo)
     End Sub
     Public Function Has(ByVal key As String) As Boolean
         Has = dObjs.ContainsKey(key)
     End Function
-
-    Public Function GetObjects(ByVal strQuery As String) As ManagementObjectCollection
-        Dim query As ManagementObjectSearcher
-        Dim queryCollection As ManagementObjectCollection
-        Dim msc As ManagementScope = New ManagementScope("\\.\root\cimv2")
-        Dim select_query As SelectQuery = New SelectQuery(strQuery)
-        query = New ManagementObjectSearcher(msc, select_query)
-        queryCollection = query.Get()
-        Return queryCollection
-    End Function
-
     Public Function Keys() As ICollection(Of String)
         Return dObjs.Keys
     End Function
@@ -445,39 +459,28 @@ Class SysObjects
     Public Sub Log(ByVal str As String)
         Console.WriteLine(str)
     End Sub
+    Public Sub WriteXML(ByRef w As XmlTextWriter)
+        w.WriteStartElement(Me.GroupName)
+        w.WriteAttributeString(_ATCNT, Me.Count)
+        For Each s As String In Me.Keys
+            Me.GetObj(s).WriteXML(Me.EntryName, w)
+        Next
+        w.WriteEndElement()
+    End Sub
 End Class
 
 Class ObjectInfo
     Private dProps As Dictionary(Of String, String)
-    Private sKey As String
-
-    Public Sub New()
+    Public ReadOnly Property Id As String
+    Public Sub New(objId As String)
+        Me.Id = objId
         dProps = New Dictionary(Of String, String)
     End Sub
-    Public Function IsOfValue(ByVal propName As String, ByVal testValue As String)
-        If Has(propName) Then
-            IsOfValue = (dProps.Item(propName) = testValue)
-        Else
-            IsOfValue = False
-        End If
-    End Function
-    Public Property Key() As String
-        Get
-            Return sKey
-        End Get
-        Set(ByVal value As String)
-            sKey = value
-        End Set
-    End Property
     Public Sub Add(ByVal propName As String, ByVal propValue As String)
         dProps.Add(propName, propValue)
     End Sub
     Public Function Value(ByVal propName As String) As String
-        If Has(propName) Then
-            Value = dProps.Item(propName)
-        Else
-            Value = ""
-        End If
+        Return If(Has(propName), dProps.Item(propName), "")
     End Function
     Public Function Has(ByVal propName As String)
         Has = dProps.ContainsKey(propName)
@@ -488,7 +491,7 @@ Class ObjectInfo
     Public Sub WriteXML(ByVal sType As String, ByRef writer As XmlTextWriter, ByVal bEndElement As Boolean, Optional ByVal attrName As String = "", Optional ByVal attrVal As String = "")
         With writer
             .WriteStartElement(sType)
-            .WriteAttributeString(_ATTID, sKey)
+            .WriteAttributeString(_ATTID, Id)
             If attrName <> "" Then .WriteAttributeString(attrName, attrVal)
             For Each k As String In dProps.Keys
                 .WriteStartElement(_EPROP)
@@ -528,7 +531,7 @@ Class Synfo
                     Next
                 Case _ELDRV
                     For Each sX In cX.ChildNodes
-                        Dim s = New SynProps("drv")
+                        Dim s = New SynProps(_OBDRV)
                         s.Parse(sX)
                         dDrvs.Add(s.Id, s)
                     Next
@@ -716,35 +719,68 @@ Class CmpResult
     Public Sub AddRemovedApp(ByRef a As SynApp)
         removedApps.Add(a)
     End Sub
+    Private Sub ToXml(ByRef w As XmlTextWriter, ByVal elName As String, ByRef lstObj As List(Of SynCmp))
+        If lstObj.Count > 0 Then
+            w.WriteStartElement(elName)
+            w.WriteAttributeString(_ATCNT, lstObj.Count)
+            For Each x In lstObj
+                x.ToXml(w)
+            Next
+            w.WriteEndElement()
+        End If
+    End Sub
+    Private Sub ToXml(ByRef w As XmlTextWriter, ByVal elName As String, ByRef lstObj As List(Of SynProps))
+        If lstObj.Count > 0 Then
+            w.WriteStartElement(elName)
+            w.WriteAttributeString(_ATCNT, lstObj.Count)
+            For Each x In lstObj
+                x.ToXml(w)
+            Next
+            w.WriteEndElement()
+        End If
+    End Sub
+    Private Sub ToXml(ByRef w As XmlTextWriter, ByVal elName As String, ByRef lstObj As List(Of SynApp))
+        If lstObj.Count > 0 Then
+            w.WriteStartElement(elName)
+            w.WriteAttributeString(_ATCNT, lstObj.Count)
+            For Each x In lstObj
+                x.ToXml(w)
+            Next
+            w.WriteEndElement()
+        End If
+    End Sub
     Public Sub ToXml(ByRef w As XmlTextWriter)
         w.WriteStartElement("result")
         infoCmp.ToXml(w)
         If svcCmps.Count > 0 Or addedSvcs.Count > 0 Or removedSvcs.Count > 0 Then
             w.WriteStartElement(_ELSVC)
-            If svcCmps.Count > 0 Then
-                w.WriteStartElement("changedServices")
-                w.WriteAttributeString(_ATCNT, svcCmps.Count)
-                For Each x In svcCmps
-                    x.ToXml(w)
-                Next
-                w.WriteEndElement()
-            End If
-            If addedSvcs.Count > 0 Then
-                w.WriteStartElement("addedServices")
-                w.WriteAttributeString(_ATCNT, addedSvcs.Count)
-                For Each x In addedSvcs
-                    x.ToXml(w)
-                Next
-                w.WriteEndElement()
-            End If
-            If removedSvcs.Count > 0 Then
-                w.WriteStartElement("removedServices")
-                w.WriteAttributeString(_ATCNT, removedSvcs.Count)
-                For Each x In removedSvcs
-                    x.ToXml(w)
-                Next
-                w.WriteEndElement()
-            End If
+            ToXml(w, "changedServices", svcCmps)
+            ToXml(w, "addedServices", addedSvcs)
+            ToXml(w, "removedServices", removedSvcs)
+            'If svcCmps.Count > 0 Then
+            '    w.WriteStartElement("changedServices")
+            '    w.WriteAttributeString(_ATCNT, svcCmps.Count)
+            '    For Each x In svcCmps
+            '        x.ToXml(w)
+            '    Next
+            '    w.WriteEndElement()
+            'End If
+            'If addedSvcs.Count > 0 Then
+            '    w.WriteStartElement("addedServices")
+            '    w.WriteAttributeString(_ATCNT, addedSvcs.Count)
+            '    For Each x In addedSvcs
+            '        x.ToXml(w)
+            '    Next
+            '    w.WriteEndElement()
+            'End If
+            'If removedSvcs.Count > 0 Then
+            '    w.WriteStartElement("removedServices")
+            '    w.WriteAttributeString(_ATCNT, removedSvcs.Count)
+            '    For Each x In removedSvcs
+            '        x.ToXml(w)
+            '    Next
+            '    w.WriteEndElement()
+            'End If
             w.WriteEndElement()
         End If
         If appCmps.Count > 0 Or addedApps.Count > 0 Or removedApps.Count > 0 Then
@@ -757,50 +793,55 @@ Class CmpResult
                 Next
                 w.WriteEndElement()
             End If
-            If addedApps.Count > 0 Then
-                w.WriteStartElement("addedProducts")
-                w.WriteAttributeString(_ATCNT, addedApps.Count)
-                For Each x In addedApps
-                    x.ToXml(w)
-                Next
-                w.WriteEndElement()
-            End If
-            If removedApps.Count > 0 Then
-                w.WriteStartElement("removedProducts")
-                w.WriteAttributeString(_ATCNT, removedApps.Count)
-                For Each x In removedApps
-                    x.ToXml(w)
-                Next
-                w.WriteEndElement()
-            End If
+            ToXml(w, "addedProducts", addedApps)
+            ToXml(w, "removedProducts", removedApps)
+            'If addedApps.Count > 0 Then
+            '    w.WriteStartElement("addedProducts")
+            '    w.WriteAttributeString(_ATCNT, addedApps.Count)
+            '    For Each x In addedApps
+            '        x.ToXml(w)
+            '    Next
+            '    w.WriteEndElement()
+            'End If
+            'If removedApps.Count > 0 Then
+            '    w.WriteStartElement("removedProducts")
+            '    w.WriteAttributeString(_ATCNT, removedApps.Count)
+            '    For Each x In removedApps
+            '        x.ToXml(w)
+            '    Next
+            '    w.WriteEndElement()
+            'End If
             w.WriteEndElement()
         End If
         If qfeCmps.Count > 0 Or addedQfes.Count > 0 Or removedQfes.Count > 0 Then
             w.WriteStartElement(_ELHFX)
-            If qfeCmps.Count > 0 Then
-                w.WriteStartElement("changedHotfixes")
-                w.WriteAttributeString(_ATCNT, qfeCmps.Count)
-                For Each x In qfeCmps
-                    x.ToXml(w)
-                Next
-                w.WriteEndElement()
-            End If
-            If addedQfes.Count > 0 Then
-                w.WriteStartElement("addedHotfixes")
-                w.WriteAttributeString(_ATCNT, addedQfes.Count)
-                For Each x In addedQfes
-                    x.ToXml(w)
-                Next
-                w.WriteEndElement()
-            End If
-            If removedQfes.Count > 0 Then
-                w.WriteStartElement("removedHotfixes")
-                w.WriteAttributeString(_ATCNT, removedQfes.Count)
-                For Each x In removedQfes
-                    x.ToXml(w)
-                Next
-                w.WriteEndElement()
-            End If
+            ToXml(w, "changedHotfixes", qfeCmps)
+            ToXml(w, "addedHotfixes", addedQfes)
+            ToXml(w, "removedHotfixes", removedQfes)
+            'If qfeCmps.Count > 0 Then
+            '    w.WriteStartElement("changedHotfixes")
+            '    w.WriteAttributeString(_ATCNT, qfeCmps.Count)
+            '    For Each x In qfeCmps
+            '        x.ToXml(w)
+            '    Next
+            '    w.WriteEndElement()
+            'End If
+            'If addedQfes.Count > 0 Then
+            '    w.WriteStartElement("addedHotfixes")
+            '    w.WriteAttributeString(_ATCNT, addedQfes.Count)
+            '    For Each x In addedQfes
+            '        x.ToXml(w)
+            '    Next
+            '    w.WriteEndElement()
+            'End If
+            'If removedQfes.Count > 0 Then
+            '    w.WriteStartElement("removedHotfixes")
+            '    w.WriteAttributeString(_ATCNT, removedQfes.Count)
+            '    For Each x In removedQfes
+            '        x.ToXml(w)
+            '    Next
+            '    w.WriteEndElement()
+            'End If
             w.WriteEndElement()
         End If
         w.WriteEndElement()
@@ -1036,7 +1077,7 @@ Class SynApp
         If Not IsNothing(Id) Then w.WriteAttributeString(_ATTID, Id)
         For Each s As String In PropertyKeys()
             w.WriteStartElement(s)
-            w.WriteString(GetProperty(s))
+            w.WriteString(PropertyValue(s))
             w.WriteEndElement()
         Next
         If HasSubProps() Then SubProperties.ToXml(w)
@@ -1104,26 +1145,26 @@ Class SynProps
         Get
             Return name
         End Get
-        Set(ByVal value As String)
+        Set(value As String)
             name = value
         End Set
     End Property
     Public Function PropertyCount() As Integer
-        PropertyCount = dProps.Count
+        Return dProps.Count
     End Function
-    Public Sub AddProperty(ByVal name As String, ByVal val As String)
+    Public Sub AddProperty(name As String, val As String)
         dProps.Add(name, val)
     End Sub
-    Public Function GetProperty(ByVal name As String) As String
-        GetProperty = dProps.Item(name)
+    Public Function PropertyValue(name As String) As String
+        Return dProps.Item(name)
     End Function
-    Public Function PropertyExists(ByVal name As String) As Boolean
-        PropertyExists = dProps.ContainsKey(name)
+    Public Function PropertyExists(name As String) As Boolean
+        Return dProps.ContainsKey(name)
     End Function
     Public Function PropertyKeys() As ICollection(Of String)
-        PropertyKeys = dProps.Keys
+        Return dProps.Keys
     End Function
-    Public Sub RemoveProperty(ByVal name As String)
+    Public Sub RemoveProperty(name As String)
         dProps.Remove(name)
     End Sub
     Public Sub Parse(ByRef xml As XmlElement)
@@ -1141,10 +1182,10 @@ Class SynProps
         Next
     End Sub
     Public Function SubProperties() As SynProps
-        SubProperties = subProps
+        Return subProps
     End Function
     Public Function HasSubProps() As Boolean
-        HasSubProps = Not IsNothing(Me.subProps)
+        Return Not IsNothing(Me.subProps)
     End Function
     Public Sub ToXml(ByRef w As XmlTextWriter)
         If PropertyCount() > 0 Then
@@ -1152,7 +1193,7 @@ Class SynProps
             If Not IsNothing(Id) Then w.WriteAttributeString(_ATTID, Id)
             For Each s As String In PropertyKeys()
                 w.WriteStartElement(s)
-                w.WriteString(GetProperty(s))
+                w.WriteString(PropertyValue(s))
                 w.WriteEndElement()
             Next
             If HasSubProps() Then subProps.ToXml(w)
@@ -1163,8 +1204,8 @@ Class SynProps
         If Me.Id = sBase.Id Then
             For Each k In New List(Of String)(Me.PropertyKeys)
                 If sBase.PropertyExists(k) Then
-                    Dim rV = Me.GetProperty(k)
-                    Dim cV = sBase.GetProperty(k)
+                    Dim rV = Me.PropertyValue(k)
+                    Dim cV = sBase.PropertyValue(k)
                     If Not rV = cV Then sCmp.AddDiff(k, rV, cV)
                     Me.RemoveProperty(k)
                     sBase.RemoveProperty(k)
@@ -1173,13 +1214,13 @@ Class SynProps
 
             If Me.PropertyCount > 0 Then
                 For Each k In Me.PropertyKeys
-                    sCmp.AddRemoved(k, Me.GetProperty(k))
+                    sCmp.AddRemoved(k, Me.PropertyValue(k))
                 Next
             End If
 
             If sBase.PropertyCount > 0 Then
                 For Each k In sBase.PropertyKeys
-                    sCmp.AddAdded(k, sBase.GetProperty(k))
+                    sCmp.AddAdded(k, sBase.PropertyValue(k))
                 Next
             End If
         End If
