@@ -5,7 +5,6 @@ Imports System.Management
 Imports System.IO
 Imports Microsoft.Win32
 Imports System.Runtime.InteropServices
-Imports System.Data.Odbc
 
 
 Module App
