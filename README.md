@@ -1,5 +1,5 @@
 # synfo
-Utility to dump and compare system info (computer properties, environment variables and installed products/updates)
+Utility to dump and compare system info (computer properties, environment variables, services, system drivers and updates, as well as the installed products and the patches applied to them)
 
 **Usage:**
 to dump the system info, run with no parameters. the info will be dumped into an XML file (referred to as synfo file) on the same location as the executable.
