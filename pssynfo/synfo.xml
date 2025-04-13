@@ -1,0 +1,35 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<synfo>
+	<dump>
+		<compinfo typ="nfo" obj="nfo">
+			<fld>Version,Caption,InstallDate,Locale,OSArchitecture,OSLanguage,SystemDirectory,SystemDrive,TotalVisibleMemorySize</fld>
+		</compinfo>
+		<services typ="wmi" obj="svc">
+			<cls>Win32_Service</cls>
+			<fld>AcceptStop,Caption,CheckPoint,CreationClassName,Description,DesktopInteract,DisplayName,ErrorControl,ExitCode,InstallDate,Name,PathName,ProcessId,ServiceSpecificExitCode,ServiceType,Started,StartMode,StartName,State,Status,SystemCreationClassName,SystemName,TagId,WaitHint</fld>
+			<key>Name</key>
+			<ext fld="Version">PathName</ext>
+		</services>
+		<hotfixes typ="wmi" obj="qfe">
+			<cls>Win32_QuickFixEngineering</cls>
+			<fld>Caption,Description,HotFixID,InstalledBy,InstalledOn</fld>
+			<key>HotFixID</key>
+		</hotfixes>
+		<drivers typ="wmi" obj="drv">
+			<cls>Win32_SystemDriver</cls>
+			<fld>AcceptPause,AcceptStop,Caption,Description,DesktopInteract,DisplayName,ErrorControl,ExitCode,Name,PathName,ServiceSpecificExitCode,ServiceType,Started,StartMode,StartName,State,Status,TagId</fld>
+			<key>Name</key>
+			<ext fld="Version">PathName</ext>
+		</drivers>
+		<arpregs typ="reg" obj="arp">
+			<x64>SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\</x64>
+			<x86>SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Uninstall\</x86>
+		</arpregs>
+		<products typ="wix" obj="app">
+			<prd>ProductName,VersionString,InstallDate,Publisher,URLInfoAbout,InstallLocation,InstallSource,PackageName</prd>
+			<pch>DisplayName,InstallDate,MoreInfoURL,State,LocalPackage,Transforms,Uninstallable</pch>
+		</products>
+	</dump>
+	<comp>
+	</comp>
+</synfo>
