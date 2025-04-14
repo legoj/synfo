@@ -1,8 +1,12 @@
-﻿
+
 Class Synfo{
+    [string]$_DEFCFG="PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiID8+CjxzeW5mbz4KCTxkdW1wPgoJCTxjb21waW5mbyB0eXA9Im5mbyIgb2JqPSJuZm8iPgoJCQk8ZmxkPlZlcnNpb24sQ2FwdGlvbixJbnN0YWxsRGF0ZSxMb2NhbGUsT1NBcmNoaXRlY3R1cmUsT1NMYW5ndWFnZSxTeXN0ZW1EaXJlY3RvcnksU3lzdGVtRHJpdmUsVG90YWxWaXNpYmxlTWVtb3J5U2l6ZTwvZmxkPgoJCTwvY29tcGluZm8+CgkJPHNlcnZpY2VzIHR5cD0id21pIiBvYmo9InN2YyI+CgkJCTxjbHM+V2luMzJfU2VydmljZTwvY2xzPgoJCQk8ZmxkPkFjY2VwdFN0b3AsQ2FwdGlvbixDaGVja1BvaW50LENyZWF0aW9uQ2xhc3NOYW1lLERlc2NyaXB0aW9uLERlc2t0b3BJbnRlcmFjdCxEaXNwbGF5TmFtZSxFcnJvckNvbnRyb2wsRXhpdENvZGUsSW5zdGFsbERhdGUsTmFtZSxQYXRoTmFtZSxQcm9jZXNzSWQsU2VydmljZVNwZWNpZmljRXhpdENvZGUsU2VydmljZVR5cGUsU3RhcnRlZCxTdGFydE1vZGUsU3RhcnROYW1lLFN0YXRlLFN0YXR1cyxTeXN0ZW1DcmVhdGlvbkNsYXNzTmFtZSxTeXN0ZW1OYW1lLFRhZ0lkLFdhaXRIaW50PC9mbGQ+CgkJCTxrZXk+TmFtZTwva2V5PgoJCQk8ZXh0IGZsZD0iVmVyc2lvbiI+UGF0aE5hbWU8L2V4dD4KCQk8L3NlcnZpY2VzPgoJCTxob3RmaXhlcyB0eXA9IndtaSIgb2JqPSJxZmUiPgoJCQk8Y2xzPldpbjMyX1F1aWNrRml4RW5naW5lZXJpbmc8L2Nscz4KCQkJPGZsZD5DYXB0aW9uLERlc2NyaXB0aW9uLEhvdEZpeElELEluc3RhbGxlZEJ5LEluc3RhbGxlZE9uPC9mbGQ+CgkJCTxrZXk+SG90Rml4SUQ8L2tleT4KCQk8L2hvdGZpeGVzPgoJCTxkcml2ZXJzIHR5cD0id21pIiBvYmo9ImRydiI+CgkJCTxjbHM+V2luMzJfU3lzdGVtRHJpdmVyPC9jbHM+CgkJCTxmbGQ+QWNjZXB0UGF1c2UsQWNjZXB0U3RvcCxDYXB0aW9uLERlc2NyaXB0aW9uLERlc2t0b3BJbnRlcmFjdCxEaXNwbGF5TmFtZSxFcnJvckNvbnRyb2wsRXhpdENvZGUsTmFtZSxQYXRoTmFtZSxTZXJ2aWNlU3BlY2lmaWNFeGl0Q29kZSxTZXJ2aWNlVHlwZSxTdGFydGVkLFN0YXJ0TW9kZSxTdGFydE5hbWUsU3RhdGUsU3RhdHVzLFRhZ0lkPC9mbGQ+CgkJCTxrZXk+TmFtZTwva2V5PgoJCQk8ZXh0IGZsZD0iVmVyc2lvbiI+UGF0aE5hbWU8L2V4dD4KCQk8L2RyaXZlcnM+CgkJPGFycHJlZ3MgdHlwPSJyZWciIG9iaj0iYXJwIj4KCQkJPHg2ND5TT0ZUV0FSRVxNaWNyb3NvZnRcV2luZG93c1xDdXJyZW50VmVyc2lvblxVbmluc3RhbGxcPC94NjQ+CgkJCTx4ODY+U09GVFdBUkVcV09XNjQzMk5vZGVcTWljcm9zb2Z0XFdpbmRvd3NcQ3VycmVudFZlcnNpb25cVW5pbnN0YWxsXDwveDg2PgoJCTwvYXJwcmVncz4KCQk8cHJvZHVjdHMgdHlwPSJ3aXgiIG9iaj0iYXBwIj4KCQkJPHByZD5Qcm9kdWN0TmFtZSxWZXJzaW9uU3RyaW5nLEluc3RhbGxEYXRlLFB1Ymxpc2hlcixVUkxJbmZvQWJvdXQsSW5zdGFsbExvY2F0aW9uLEluc3RhbGxTb3VyY2UsUGFja2FnZU5hbWU8L3ByZD4KCQkJPHBjaD5EaXNwbGF5TmFtZSxJbnN0YWxsRGF0ZSxNb3JlSW5mb1VSTCxTdGF0ZSxMb2NhbFBhY2thZ2UsVHJhbnNmb3JtcyxVbmluc3RhbGxhYmxlPC9wY2g+CgkJPC9wcm9kdWN0cz4KCTwvZHVtcD4KCTxjb21wPgoJPC9jb21wPgo8L3N5bmZvPg=="
     [string]$ConfigXml = "$global:PSScriptRoot\synfo.xml"
     $WCObjects = [System.Collections.ArrayList]@() 
     [void]DumpObjects(){
+        if(!(Test-Path $this.ConfigXml)){
+            [Text.Encoding]::Utf8.GetString([Convert]::FromBase64String($this._DEFCFG)) | Out-File $this.ConfigXml -Encoding utf8
+        }
         [xml]$xml = gc $this.ConfigXml
         foreach($child in $xml.DocumentElement.dump.ChildNodes){
             [System.Xml.XmlElement]$ch = $child
@@ -17,7 +21,6 @@ Class Synfo{
         }
     }
     [void]ReadComputerInfo([System.Xml.XmlElement]$xml){
-        $this.DumpCurrentMethod()
         $wco = [WinCompObject]::new($xml.LocalName,$env:COMPUTERNAME)
         $this.WCObjects.Add($wco)
 
@@ -32,7 +35,6 @@ Class Synfo{
         
     }
     [void]ReadWIXObjects([System.Xml.XmlElement]$xml){
-        $this.DumpCurrentMethod()
         $obj = $xml.GetAttribute("obj")
         $nam = $xml.LocalName
         $prd = $xml.SelectSingleNode("prd").InnerText.Split(",")
@@ -67,7 +69,6 @@ Class Synfo{
         
     }
     [void]ReadRegObjects([System.Xml.XmlElement]$xml){
-        $this.DumpCurrentMethod()
         $obj = $xml.GetAttribute("obj")
         $nam = $xml.LocalName
         $wcc = [WinCompCollection]::new($nam)
@@ -83,7 +84,6 @@ Class Synfo{
         $this.WCObjects.Add($wcc)
     }
     [void]ReadWMIObjects([System.Xml.XmlElement]$xml){
-        $this.DumpCurrentMethod()
         $obj = $xml.GetAttribute("obj")
         $nam = $xml.LocalName
         $cls = $xml.SelectSingleNode("cls").InnerText
@@ -133,8 +133,8 @@ Class Synfo{
         $writer.WriteEndDocument()
         $writer.Close()
     }
-    [void]DumpCurrentMethod () {
-        Write-Host($(Get-PSCallStack)[1].FunctionName)
+    [string]CurrentMethod () {
+        return (Get-PSCallStack)[1].FunctionName
     }
     static [string]ToStringValue($pVal){
         $p = ""
@@ -148,6 +148,7 @@ Class Synfo{
         }
         return $p
     }
+
 }
 
 Class WinComp{
@@ -219,7 +220,5 @@ Class WinCompObject : WinComp{
 
 
 $syn = [Synfo]::new()
-#$syn.ReadXML("$PSScriptRoot\sample.xml")
-
 $syn.DumpObjects()
 $syn.SaveToXML("$PSScriptRoot\testsave.xml")
