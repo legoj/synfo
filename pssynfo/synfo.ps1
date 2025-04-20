@@ -21,14 +21,14 @@ Class Synfo{
         }
     }
     [void]ReadComputerInfo([System.Xml.XmlElement]$xml){
-        $wco = [WinCompObject]::new($xml.LocalName,$env:COMPUTERNAME)
+        $wco = [WCObject]::new($xml.LocalName,$env:COMPUTERNAME)
         $this.WCObjects.Add($wco)
 
         $fld = $xml.SelectSingleNode("fld").InnerText.Split(",")
         $nfo = gwmi -ClassName Win32_OperatingSystem -Property $fld 
         foreach($p in $nfo.Properties){ $wco.AddProp($p.Name,$p.Value)  }
 
-        $wen = [WinCompObject]::new("envvars","SYSTEM")
+        $wen = [WCObject]::new("envvars","SYSTEM")
         $wco.SubProps = $wen
         $sev = [Environment]::GetEnvironmentVariables(2)
         foreach($p in $sev.Keys){ $wen.AddProp($p,$sev[$p])    }        
@@ -41,19 +41,19 @@ Class Synfo{
         $pch = $xml.SelectSingleNode("pch").InnerText.Split(",")
 
         $wi = New-Object -ComObject "WindowsInstaller.Installer"
-        $wcc = [WinCompCollection]::new($nam)
+        $wcc = [WCCollection]::new($nam)
 
         $col =  $wi.GetType().InvokeMember('Products', [System.Reflection.BindingFlags]::GetProperty, $null, $wi, $null)
         foreach($swp in $col){
-            $wco = [WinCompObject]::new($obj,$swp)
+            $wco = [WCObject]::new($obj,$swp)
             foreach($p in $prd){  $wco.AddProp($p,$wi.ProductInfo($swp, $p))  }
             $pat = $wi.PatchesEx($swp,"",4,15)
             if($pat.Count() -gt 0){
-                $pcc = [WinCompCollection]::new("patches")
+                $pcc = [WCCollection]::new("patches")
                 foreach($q in $pat){
                     $k = $q.PatchProperty("DisplayName")
                     if($k -ne $null -and $k.Contains("(KB")){$k = $k.SubString($k.IndexOf("KB"),9)}
-                    $pco = [WinCompObject]::new("patch",$k)
+                    $pco = [WCObject]::new("patch",$k)
                     foreach($p in $pch){
                         $v = ""
                         try{ $v = $q.PatchProperty($p) } catch{}
@@ -71,11 +71,11 @@ Class Synfo{
     [void]ReadRegObjects([System.Xml.XmlElement]$xml){
         $obj = $xml.GetAttribute("obj")
         $nam = $xml.LocalName
-        $wcc = [WinCompCollection]::new($nam)
+        $wcc = [WCCollection]::new($nam)
         foreach($cNode in $xml.ChildNodes){
             $rks = gci "HKLM:$($cNode.InnerText)"
             foreach($rap in $rks){
-                $wco = [WinCompObject]::new($obj, $rap.PSChildName)
+                $wco = [WCObject]::new($obj, $rap.PSChildName)
                 $props = $rap | Get-Item 
                 foreach($p in $props.Property){$wco.AddProp($p,[Synfo]::ToStringValue($props.GetValue($p)))  }
                 if(!$wcc.Objects.ContainsKey($wco.Id)){  $wcc.Objects.Add($wco.Id,$wco) }
@@ -91,10 +91,10 @@ Class Synfo{
         $key = $xml.SelectSingleNode("key").InnerText
         $ext = $xml.SelectSingleNode("ext")
         $col = gwmi -Query "SELECT $fld FROM $cls"
-        $wcc = [WinCompCollection]::new($nam)
+        $wcc = [WCCollection]::new($nam)
         foreach($wmo in $col){
             $kvl = $wmo.Properties.Item($key).Value
-            $wco = [WinCompObject]::new($obj, $kvl)
+            $wco = [WCObject]::new($obj, $kvl)
             foreach($p in $wmo.Properties){ $wco.AddProp($p.Name,$p.Value)}
             if($ext -ne $null){ 
                 $cus = $ext.Attributes.GetNamedItem("fld").Value
@@ -115,10 +115,10 @@ Class Synfo{
         foreach($child in $xml.DocumentElement.ChildNodes){
             [System.Xml.XmlElement]$ch = $child
             if($ch.HasAttribute("count")){
-                $wc = [WinCompCollection]::ParseXml($ch)
+                $wc = [WCCollection]::ParseXml($ch)
                 $this.WCObjects.Add($wc)
             }elseif($ch.HasAttribute("id")){
-                $wc = [WinCompObject]::ParseXml($ch)
+                $wc = [WCObject]::ParseXml($ch)
                 $this.WCObjects.Add($wc)
             }
         }
@@ -136,6 +136,8 @@ Class Synfo{
     [string]CurrentMethod () {
         return (Get-PSCallStack)[1].FunctionName
     }
+    [void]Compare([Synfo]$other){
+    }
     static [string]ToStringValue($pVal){
         $p = ""
         if($pVal -eq $null){ return $p }
@@ -151,10 +153,11 @@ Class Synfo{
 
 }
 
-Class WinComp{
+#WindowsComponent base class
+Class WCBase{
     [string] $Id
     [Hashtable] $Objects 
-    WinComp([string]$Id){ $this.Id = $Id; $this.Objects= @{} }
+    WCBase([string]$Id){ $this.Id = $Id; $this.Objects= @{} }
     [void]WriteXml([System.Xml.XmlTextWriter]$Writer){
         $Writer.WriteStartElement($this.Id)
         $Writer.WriteAttributeString("count", $this.Objects.Count)
@@ -163,29 +166,33 @@ Class WinComp{
         }
         $Writer.WriteEndElement()
     }
+    [void]Compare([WCBase]$other){
+    }
 }
 
-Class WinCompCollection : WinComp{
-    WinCompCollection([string]$Name):base($Name){}
-    [void]Add([WinCompObject]$wcObj){ $this.Objects.Add($wcObj.Id, $wcObj)}
+#Windows Component Collection class
+Class WCCollection : WCBase{
+    WCCollection([string]$Name):base($Name){}
+    [void]Add([WCObject]$wcObj){ $this.Objects.Add($wcObj.Id, $wcObj)}
     [int]Count(){ return $this.Objects.Count}
-    static [WinCompCollection]ParseXml([System.Xml.XmlElement]$xml){
-        $wc = [WinCompCollection]::new($xml.LocalName)
+    static [WCCollection]ParseXml([System.Xml.XmlElement]$xml){
+        $wc = [WCCollection]::new($xml.LocalName)
         foreach($cNode in $xml.ChildNodes){
             [System.Xml.XmlElement]$cXml = $cNode
-            $cwo = [WinCompObject]::ParseXml($cXml)
+            $cwo = [WCObject]::ParseXml($cXml)
             $wc.Objects.Add($cwo.Id,$cwo)
         }
         return $wc
     }
 }
 
-Class WinCompObject : WinComp{
+#Windows Component  class
+Class WCObject : WCBase{
     [string] $Type
-    [WinCompObject] $SubProps = $null
-    [WinCompCollection] $SubObjects = $null
+    [WCObject] $SubProps = $null
+    [WCCollection] $SubObjects = $null
 
-    WinCompObject([string]$Type, [string]$Id):base($Id){$this.Type = $Type}
+    WCObject([string]$Type, [string]$Id):base($Id){$this.Type = $Type}
     [void]AddProp([string]$Name,[string]$Value){ $this.Objects.Add($Name,$Value)}
     [bool]HasSubProps(){ return $this.SubProps -ne $null }
     [void]WriteXml([System.Xml.XmlTextWriter]$Writer){
@@ -202,21 +209,80 @@ Class WinCompObject : WinComp{
         if($this.SubObjects -ne $null){ $this.SubObjects.WriteXml($Writer)}
         $writer.WriteEndElement()
     }
-    static [WinCompObject]ParseXml([System.Xml.XmlElement]$xml){
-        $wc = [WinCompObject]::new($xml.LocalName,$xml.GetAttribute("id"))
+    [void]Compare([WCObject]$other){
+
+        
+    }
+    static [CRObject] CompareWCObject([WCObject]$refWCO,[WCObject]$cmpWCO){
+        $wcmpRes = [CRObject]::new($refWCO.Id)
+        $crProps = [CRBase]::new($refWCO.Id)
+        [WCObject]::CompareTable($refWCO.Objects,$cmpWCO.Objects,$crProps)
+        $wcmpRes.Props=$crProps
+        if(!IsNothing($refWCO.SubProps)){
+            $crSubProps = [WCObject]::CompareWCObject($refWCO.SubProps,$cmpWCO.SubProps)
+            $wcmpRes.SubProps=$crSubProps      
+        }
+        if(!IsNothing($refWCO.SubObjects)){
+            foreach($wco in $refWCO.SubObjects.Objects.Values){
+                
+            }
+        }
+        return $wcmpRes
+    }
+    static [CRBase]CompareTable([Hashtable]$refTab,[Hashtable]$cmpTab,[string]$id){
+        $cmpRes = [CRBase]::new($refTab.Id)
+        foreach($k in $refTab.Keys){
+            $rVal = $refTab[$k]
+            if($cmpTab.ContainsKey($k)){ $cVal = $cmpTab[$k]; if($rVal -ne $cVal){$cmpRes.Changed.Add($k,[WCChanged]::new($rVal,$cVal))} }
+            else{ $cmpRes.Deleted.Add($k,$rVal) }
+            $cmpTab.Remove($k)
+        }
+        $cmpRes.Added = $cmpTab # props left on the cmpTab are the newly added props
+        return $cmpRes
+    }
+    static [WCObject]ParseXml([System.Xml.XmlElement]$xml){
+        $wc = [WCObject]::new($xml.LocalName,$xml.GetAttribute("id"))
         foreach($cNode in $xml.ChildNodes){
             [System.Xml.XmlElement]$cXml = $cNode
-            if($cXml.LocalName -eq "prop"){ $wc.AddProp($cXml.GetAttribute("name"),$cXml.InnerText)}
-            elseif($cXml.HasAttribute("id")){
-                $wc.SubProps = [WinCompObject]::ParseXml($cXml)
-            }elseif($cXml.HasAttribute("count")){
-                $wc.SubObjects = [WinCompCollection]::ParseXml($cXml)
-            }
+            if($cXml.LocalName -eq "prop"){   $wc.AddProp($cXml.GetAttribute("name"),$cXml.InnerText)}
+            elseif($cXml.HasAttribute("id")){ $wc.SubProps = [WCObject]::ParseXml($cXml) }
+            elseif($cXml.HasAttribute("count")){ $wc.SubObjects = [WCCollection]::ParseXml($cXml) }
         }
         return $wc
     }
 
 }
+
+#Changed Window Component
+Class WCChanged{
+    [object]$OldValue
+    [object]$NewValue
+    WCChanged($old,$new){
+        $this.OldValue = $old
+        $this.NewValue = $new
+    }
+}
+#Compare Result base class
+Class CRBase{
+    [string]$Id  #id or type
+    [Hashtable]$Added = @{}
+    [Hashtable]$Changed = @{}
+    [Hashtable]$Deleted = @{}
+    CRBase([string]$id){  $this.Id = $id   }
+    [bool]HasAdded(){ return $this.Added.Count -gt 0}
+    [bool]HasChanged(){ return $this.Changed.Count -gt 0}
+    [bool]HasDeleted(){ return $this.Deleted.Count -gt 0}
+}
+#Compare Result Object class
+Class CRObject{
+    [string]$Id  #id
+    [CRBase]$Props
+    [CRObject]$SubProps
+    [CRBase]$SubObjects
+    CRObject([string]$id){  $this.Id = $id   }
+
+}
+
 
 
 $syn = [Synfo]::new()
