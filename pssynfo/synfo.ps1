@@ -1,11 +1,11 @@
 
 Class Synfo{
-    [string]$_DEFCFG="PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiID8+CjxzeW5mbz4KCTxkdW1wPgoJCTxjb21waW5mbyB0eXA9Im5mbyIgb2JqPSJuZm8iPgoJCQk8ZmxkPlZlcnNpb24sQ2FwdGlvbixJbnN0YWxsRGF0ZSxMb2NhbGUsT1NBcmNoaXRlY3R1cmUsT1NMYW5ndWFnZSxTeXN0ZW1EaXJlY3RvcnksU3lzdGVtRHJpdmUsVG90YWxWaXNpYmxlTWVtb3J5U2l6ZTwvZmxkPgoJCTwvY29tcGluZm8+CgkJPHNlcnZpY2VzIHR5cD0id21pIiBvYmo9InN2YyI+CgkJCTxjbHM+V2luMzJfU2VydmljZTwvY2xzPgoJCQk8ZmxkPkFjY2VwdFN0b3AsQ2FwdGlvbixDaGVja1BvaW50LENyZWF0aW9uQ2xhc3NOYW1lLERlc2NyaXB0aW9uLERlc2t0b3BJbnRlcmFjdCxEaXNwbGF5TmFtZSxFcnJvckNvbnRyb2wsRXhpdENvZGUsSW5zdGFsbERhdGUsTmFtZSxQYXRoTmFtZSxQcm9jZXNzSWQsU2VydmljZVNwZWNpZmljRXhpdENvZGUsU2VydmljZVR5cGUsU3RhcnRlZCxTdGFydE1vZGUsU3RhcnROYW1lLFN0YXRlLFN0YXR1cyxTeXN0ZW1DcmVhdGlvbkNsYXNzTmFtZSxTeXN0ZW1OYW1lLFRhZ0lkLFdhaXRIaW50PC9mbGQ+CgkJCTxrZXk+TmFtZTwva2V5PgoJCQk8ZXh0IGZsZD0iVmVyc2lvbiI+UGF0aE5hbWU8L2V4dD4KCQk8L3NlcnZpY2VzPgoJCTxob3RmaXhlcyB0eXA9IndtaSIgb2JqPSJxZmUiPgoJCQk8Y2xzPldpbjMyX1F1aWNrRml4RW5naW5lZXJpbmc8L2Nscz4KCQkJPGZsZD5DYXB0aW9uLERlc2NyaXB0aW9uLEhvdEZpeElELEluc3RhbGxlZEJ5LEluc3RhbGxlZE9uPC9mbGQ+CgkJCTxrZXk+SG90Rml4SUQ8L2tleT4KCQk8L2hvdGZpeGVzPgoJCTxkcml2ZXJzIHR5cD0id21pIiBvYmo9ImRydiI+CgkJCTxjbHM+V2luMzJfU3lzdGVtRHJpdmVyPC9jbHM+CgkJCTxmbGQ+QWNjZXB0UGF1c2UsQWNjZXB0U3RvcCxDYXB0aW9uLERlc2NyaXB0aW9uLERlc2t0b3BJbnRlcmFjdCxEaXNwbGF5TmFtZSxFcnJvckNvbnRyb2wsRXhpdENvZGUsTmFtZSxQYXRoTmFtZSxTZXJ2aWNlU3BlY2lmaWNFeGl0Q29kZSxTZXJ2aWNlVHlwZSxTdGFydGVkLFN0YXJ0TW9kZSxTdGFydE5hbWUsU3RhdGUsU3RhdHVzLFRhZ0lkPC9mbGQ+CgkJCTxrZXk+TmFtZTwva2V5PgoJCQk8ZXh0IGZsZD0iVmVyc2lvbiI+UGF0aE5hbWU8L2V4dD4KCQk8L2RyaXZlcnM+CgkJPGFycHJlZ3MgdHlwPSJyZWciIG9iaj0iYXJwIj4KCQkJPHg2ND5TT0ZUV0FSRVxNaWNyb3NvZnRcV2luZG93c1xDdXJyZW50VmVyc2lvblxVbmluc3RhbGxcPC94NjQ+CgkJCTx4ODY+U09GVFdBUkVcV09XNjQzMk5vZGVcTWljcm9zb2Z0XFdpbmRvd3NcQ3VycmVudFZlcnNpb25cVW5pbnN0YWxsXDwveDg2PgoJCTwvYXJwcmVncz4KCQk8cHJvZHVjdHMgdHlwPSJ3aXgiIG9iaj0iYXBwIj4KCQkJPHByZD5Qcm9kdWN0TmFtZSxWZXJzaW9uU3RyaW5nLEluc3RhbGxEYXRlLFB1Ymxpc2hlcixVUkxJbmZvQWJvdXQsSW5zdGFsbExvY2F0aW9uLEluc3RhbGxTb3VyY2UsUGFja2FnZU5hbWU8L3ByZD4KCQkJPHBjaD5EaXNwbGF5TmFtZSxJbnN0YWxsRGF0ZSxNb3JlSW5mb1VSTCxTdGF0ZSxMb2NhbFBhY2thZ2UsVHJhbnNmb3JtcyxVbmluc3RhbGxhYmxlPC9wY2g+CgkJPC9wcm9kdWN0cz4KCTwvZHVtcD4KCTxjb21wPgoJPC9jb21wPgo8L3N5bmZvPg=="
+    static [string]$_DEFCFG="PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiID8+CjxzeW5mbz4KCTxkdW1wPgoJCTxjb21waW5mbyB0eXA9Im5mbyIgb2JqPSJuZm8iPgoJCQk8ZmxkPlZlcnNpb24sQ2FwdGlvbixJbnN0YWxsRGF0ZSxMb2NhbGUsT1NBcmNoaXRlY3R1cmUsT1NMYW5ndWFnZSxTeXN0ZW1EaXJlY3RvcnksU3lzdGVtRHJpdmUsVG90YWxWaXNpYmxlTWVtb3J5U2l6ZTwvZmxkPgoJCTwvY29tcGluZm8+CgkJPHNlcnZpY2VzIHR5cD0id21pIiBvYmo9InN2YyI+CgkJCTxjbHM+V2luMzJfU2VydmljZTwvY2xzPgoJCQk8ZmxkPkFjY2VwdFN0b3AsQ2FwdGlvbixDaGVja1BvaW50LENyZWF0aW9uQ2xhc3NOYW1lLERlc2NyaXB0aW9uLERlc2t0b3BJbnRlcmFjdCxEaXNwbGF5TmFtZSxFcnJvckNvbnRyb2wsRXhpdENvZGUsSW5zdGFsbERhdGUsTmFtZSxQYXRoTmFtZSxQcm9jZXNzSWQsU2VydmljZVNwZWNpZmljRXhpdENvZGUsU2VydmljZVR5cGUsU3RhcnRlZCxTdGFydE1vZGUsU3RhcnROYW1lLFN0YXRlLFN0YXR1cyxTeXN0ZW1DcmVhdGlvbkNsYXNzTmFtZSxTeXN0ZW1OYW1lLFRhZ0lkLFdhaXRIaW50PC9mbGQ+CgkJCTxrZXk+TmFtZTwva2V5PgoJCQk8ZXh0IGZsZD0iVmVyc2lvbiI+UGF0aE5hbWU8L2V4dD4KCQk8L3NlcnZpY2VzPgoJCTxob3RmaXhlcyB0eXA9IndtaSIgb2JqPSJxZmUiPgoJCQk8Y2xzPldpbjMyX1F1aWNrRml4RW5naW5lZXJpbmc8L2Nscz4KCQkJPGZsZD5DYXB0aW9uLERlc2NyaXB0aW9uLEhvdEZpeElELEluc3RhbGxlZEJ5LEluc3RhbGxlZE9uPC9mbGQ+CgkJCTxrZXk+SG90Rml4SUQ8L2tleT4KCQk8L2hvdGZpeGVzPgoJCTxkcml2ZXJzIHR5cD0id21pIiBvYmo9ImRydiI+CgkJCTxjbHM+V2luMzJfU3lzdGVtRHJpdmVyPC9jbHM+CgkJCTxmbGQ+QWNjZXB0UGF1c2UsQWNjZXB0U3RvcCxDYXB0aW9uLERlc2NyaXB0aW9uLERlc2t0b3BJbnRlcmFjdCxEaXNwbGF5TmFtZSxFcnJvckNvbnRyb2wsRXhpdENvZGUsTmFtZSxQYXRoTmFtZSxTZXJ2aWNlU3BlY2lmaWNFeGl0Q29kZSxTZXJ2aWNlVHlwZSxTdGFydGVkLFN0YXJ0TW9kZSxTdGFydE5hbWUsU3RhdGUsU3RhdHVzLFRhZ0lkPC9mbGQ+CgkJCTxrZXk+TmFtZTwva2V5PgoJCQk8ZXh0IGZsZD0iVmVyc2lvbiI+UGF0aE5hbWU8L2V4dD4KCQk8L2RyaXZlcnM+CgkJPGFycHJlZ3MgdHlwPSJyZWciIG9iaj0iYXJwIj4KCQkJPHg2ND5TT0ZUV0FSRVxNaWNyb3NvZnRcV2luZG93c1xDdXJyZW50VmVyc2lvblxVbmluc3RhbGxcPC94NjQ+CgkJCTx4ODY+U09GVFdBUkVcV09XNjQzMk5vZGVcTWljcm9zb2Z0XFdpbmRvd3NcQ3VycmVudFZlcnNpb25cVW5pbnN0YWxsXDwveDg2PgoJCTwvYXJwcmVncz4KCQk8cHJvZHVjdHMgdHlwPSJ3aXgiIG9iaj0iYXBwIj4KCQkJPHByZD5Qcm9kdWN0TmFtZSxWZXJzaW9uU3RyaW5nLEluc3RhbGxEYXRlLFB1Ymxpc2hlcixVUkxJbmZvQWJvdXQsSW5zdGFsbExvY2F0aW9uLEluc3RhbGxTb3VyY2UsUGFja2FnZU5hbWU8L3ByZD4KCQkJPHBjaD5EaXNwbGF5TmFtZSxJbnN0YWxsRGF0ZSxNb3JlSW5mb1VSTCxTdGF0ZSxMb2NhbFBhY2thZ2UsVHJhbnNmb3JtcyxVbmluc3RhbGxhYmxlPC9wY2g+CgkJPC9wcm9kdWN0cz4KCTwvZHVtcD4KCTxjb21wPgoJPC9jb21wPgo8L3N5bmZvPg=="
     [string]$ConfigXml = "$global:PSScriptRoot\synfo.xml"
     $WCObjects = [System.Collections.ArrayList]@() 
     [void]DumpObjects(){
         if(!(Test-Path $this.ConfigXml)){
-            [Text.Encoding]::Utf8.GetString([Convert]::FromBase64String($this._DEFCFG)) | Out-File $this.ConfigXml -Encoding utf8
+            [Text.Encoding]::Utf8.GetString([Convert]::FromBase64String([Synfo]::_DEFCFG)) | Out-File $this.ConfigXml -Encoding utf8
         }
         [xml]$xml = gc $this.ConfigXml
         foreach($child in $xml.DocumentElement.dump.ChildNodes){
@@ -137,6 +137,7 @@ Class Synfo{
         return (Get-PSCallStack)[1].FunctionName
     }
     [void]Compare([Synfo]$other){
+        
     }
     static [string]ToStringValue($pVal){
         $p = ""
@@ -213,33 +214,7 @@ Class WCObject : WCBase{
 
         
     }
-    static [CRObject] CompareWCObject([WCObject]$refWCO,[WCObject]$cmpWCO){
-        $wcmpRes = [CRObject]::new($refWCO.Id)
-        $crProps = [CRBase]::new($refWCO.Id)
-        [WCObject]::CompareTable($refWCO.Objects,$cmpWCO.Objects,$crProps)
-        $wcmpRes.Props=$crProps
-        if(!IsNothing($refWCO.SubProps)){
-            $crSubProps = [WCObject]::CompareWCObject($refWCO.SubProps,$cmpWCO.SubProps)
-            $wcmpRes.SubProps=$crSubProps      
-        }
-        if(!IsNothing($refWCO.SubObjects)){
-            foreach($wco in $refWCO.SubObjects.Objects.Values){
-                
-            }
-        }
-        return $wcmpRes
-    }
-    static [CRBase]CompareTable([Hashtable]$refTab,[Hashtable]$cmpTab,[string]$id){
-        $cmpRes = [CRBase]::new($refTab.Id)
-        foreach($k in $refTab.Keys){
-            $rVal = $refTab[$k]
-            if($cmpTab.ContainsKey($k)){ $cVal = $cmpTab[$k]; if($rVal -ne $cVal){$cmpRes.Changed.Add($k,[WCChanged]::new($rVal,$cVal))} }
-            else{ $cmpRes.Deleted.Add($k,$rVal) }
-            $cmpTab.Remove($k)
-        }
-        $cmpRes.Added = $cmpTab # props left on the cmpTab are the newly added props
-        return $cmpRes
-    }
+
     static [WCObject]ParseXml([System.Xml.XmlElement]$xml){
         $wc = [WCObject]::new($xml.LocalName,$xml.GetAttribute("id"))
         foreach($cNode in $xml.ChildNodes){
@@ -255,11 +230,24 @@ Class WCObject : WCBase{
 
 #Changed Window Component
 Class WCChanged{
-    [object]$OldValue
-    [object]$NewValue
-    WCChanged($old,$new){
+    [string]$Name
+    [string]$OldValue
+    [string]$NewValue
+    WCChanged($name,$old,$new){
+        $this.Name = $name
         $this.OldValue = $old
         $this.NewValue = $new
+    }
+    [void]WriteXml([System.Xml.XmlTextWriter]$w){
+        $w.WriteStartElement("prop")
+        $w.WriteAttributeString("name", $this.Name)
+        $w.WriteStartElement("old")
+        $w.WriteString($this.OldValue)
+        $w.WriteEndElement()
+        $w.WriteStartElement("new")
+        $w.WriteString($this.NewValue)
+        $w.WriteEndElement()
+        $w.WriteEndElement()        
     }
 }
 #Compare Result base class
@@ -272,15 +260,79 @@ Class CRBase{
     [bool]HasAdded(){ return $this.Added.Count -gt 0}
     [bool]HasChanged(){ return $this.Changed.Count -gt 0}
     [bool]HasDeleted(){ return $this.Deleted.Count -gt 0}
+    [void]WriteXml([System.Xml.XmlTextWriter]$w){}
+}
+Class CRProps:CRBase{
+    [void]AddChanged([string]$name,[string]$oldVal,[string]$newVal){$this.Changed.Add($name,[WCChanged]::new($name,$oldVal,$newVal))}
+    [void]AddDeleted([string]$name,[string]$refVal){$this.Deleted.Add($name,$refVal)}
+    [WCChanged]GetChanged([string]$name){return $this.Changed[$name] }
+    [void]WriteXml([System.Xml.XmlTextWriter]$w){
+        if($this.HasAdded()){
+            $w.WriteStartElement("addedProps")
+            $w.WriteAttributeString("count", $this.Added.Count)
+            foreach($k in $this.Added.Keys){
+                $w.WriteStartElement("prop")
+                $w.WriteAttributeString("name", $k)
+                $w.WriteString($this.Added($k))
+                $w.WriteEndElement()
+            }
+            $w.WriteEndElement()
+        }
+        if($this.HasDeleted()){
+            $w.WriteStartElement("removedProps")
+            $w.WriteAttributeString("count", $this.Deleted.Count)
+            foreach($k in $this.Deleted.Keys){
+                $w.WriteStartElement("prop")
+                $w.WriteAttributeString("name", $k)
+                $w.WriteString($this.Deleted($k))
+                $w.WriteEndElement()
+            }
+            $w.WriteEndElement()
+        }
+        if($this.HasChanged()){
+            $w.WriteStartElement("changedProps")
+            $w.WriteAttributeString("count", $this.Changed.Count)
+            foreach($o in $this.Changed.Values){  $o.WriteXml($w) }
+            $w.WriteEndElement()
+        }
+    }
+    static [CRProps]Compare([Hashtable]$refTab,[Hashtable]$cmpTab,[string]$id){
+        $cmpRes = [CRProps]::new($id)
+        foreach($k in $refTab.Keys){
+            $rVal = $refTab[$k]
+            if($cmpTab.ContainsKey($k)){ $cVal = $cmpTab[$k]; if($rVal -ne $cVal){$cmpRes.AddChanged($k,$rVal,$cVal)} }
+            else{ $cmpRes.AddDeleted($k,$rVal) }
+            $cmpTab.Remove($k)
+        }
+        $cmpRes.Added = $cmpTab # props left on the cmpTab are the newly added props
+        return $cmpRes
+    }
 }
 #Compare Result Object class
-Class CRObject{
-    [string]$Id  #id
-    [CRBase]$Props
-    [CRObject]$SubProps
+Class CRObject:CRBase{
+    [CRProps]$SubProps
     [CRBase]$SubObjects
     CRObject([string]$id){  $this.Id = $id   }
+    [bool]HasAdded(){ return ([CRBase]$this).HasAdded() -or $this.SubObjects.HasAdded() -or $this.SubProps.}
+    [bool]HasChanged(){ return ([CRBase]$this).HasAdded() -or $this.SubObjects.HasAdded() -or $this.SubProps.HasAdded()}
+    [bool]HasDeleted(){ return ([CRBase]$this).HasAdded() -or $this.SubObjects.HasAdded() -or $this.SubProps.HasAdded()}
 
+    static [CRObject] Compare([WCObject]$refWCO,[WCObject]$cmpWCO){
+        $wcmpRes = [CRObject]::new($refWCO.Id)
+        $crProps = [CRBase]::new($refWCO.Id)
+        [WCObject]::CompareTable($refWCO.Objects,$cmpWCO.Objects,$crProps)
+        $wcmpRes.Props=$crProps
+        if(!IsNothing($refWCO.SubProps)){
+            $crSubProps = [WCObject]::CompareWCObject($refWCO.SubProps,$cmpWCO.SubProps)
+            $wcmpRes.SubProps=$crSubProps      
+        }
+        if(!IsNothing($refWCO.SubObjects)){
+            foreach($wco in $refWCO.SubObjects.Objects.Values){
+                
+            }
+        }
+        return $wcmpRes
+    }
 }
 
 
