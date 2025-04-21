@@ -171,7 +171,7 @@ Class WCBase{
     }
 }
 
-#Windows Component Collection class
+#WindowsComponent Collection class
 Class WCCollection : WCBase{
     WCCollection([string]$Name):base($Name){}
     [void]Add([WCObject]$wcObj){ $this.Objects.Add($wcObj.Id, $wcObj)}
@@ -187,7 +187,7 @@ Class WCCollection : WCBase{
     }
 }
 
-#Windows Component  class
+#WindowsComponent object class
 Class WCObject : WCBase{
     [string] $Type
     [WCObject] $SubProps = $null
@@ -260,6 +260,7 @@ Class CRBase{
     [bool]HasAdded(){ return $this.Added.Count -gt 0}
     [bool]HasChanged(){ return $this.Changed.Count -gt 0}
     [bool]HasDeleted(){ return $this.Deleted.Count -gt 0}
+    [bool]HasChanges(){ return $this.HasAdded() -or $this.HasChanged() -or $this.HasDeleted()  }
     [void]WriteXml([System.Xml.XmlTextWriter]$w){}
 }
 Class CRProps:CRBase{
@@ -313,10 +314,34 @@ Class CRObject:CRBase{
     [CRProps]$SubProps
     [CRBase]$SubObjects
     CRObject([string]$id){  $this.Id = $id   }
-    [bool]HasAdded(){ return ([CRBase]$this).HasAdded() -or $this.SubObjects.HasAdded() -or $this.SubProps.}
-    [bool]HasChanged(){ return ([CRBase]$this).HasAdded() -or $this.SubObjects.HasAdded() -or $this.SubProps.HasAdded()}
-    [bool]HasDeleted(){ return ([CRBase]$this).HasAdded() -or $this.SubObjects.HasAdded() -or $this.SubProps.HasAdded()}
+    [bool]HasAdded(){ return ([CRBase]$this).HasAdded() -or $this.SubObjects.HasAdded() -or $this.SubProps.HasAdded()}
+    [bool]HasChanged(){ return ([CRBase]$this).HasChanged() -or $this.SubObjects.HasChanged() -or $this.SubProps.HasChanged()}
+    [bool]HasDeleted(){ return ([CRBase]$this).HasDeleted() -or $this.SubObjects.HasDeleted() -or $this.SubProps.HasDeleted()}
+    
+    [void]WriteXml([System.Xml.XmlTextWriter]$w){
+        if($this.HasChanges()){
+              $w.WriteStartElement($this.Id)
+              #props
+              $this.WriteXml($w)
+              if(!IsNothing($this.SubProps)){
+                if($this.SubProps.HasChanges()){
+                    $w.WriteStartElement($this.Id)
+                    $this.SubProps.WriteXml($w)
+                    $w.WriteEndElement()
+                }
+              }
 
+              if(!IsNothing($this.SubObjects)){
+                 if($this.SubObjects.HasChanges()){
+                    $w.WriteStartElement($this.Id)
+                    $this.SubObjects.WriteXml($w)
+                    $w.WriteEndElement()
+                }               
+              }
+              $w.WriteEndElement()
+        }
+
+    }
     static [CRObject] Compare([WCObject]$refWCO,[WCObject]$cmpWCO){
         $wcmpRes = [CRObject]::new($refWCO.Id)
         $crProps = [CRBase]::new($refWCO.Id)
