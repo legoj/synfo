@@ -377,7 +377,7 @@ Class CRO:CR{
     [CRP]$SubProps=$null
     [CRC]$SubObjects=$null
     CRO([string]$id,[string]$name):base($name){$this.Id=$id}
-    [bool]HasChanges(){ return ($this.SysProps -ne $null -and $this.SysProps.HasChanges()) -or ($this.SubProps -ne $null -and $this.SubProps.HasChanges()) -or ($this.SubObjects -ne $null -and $this.SubObjects.HasChanges()) }
+    [bool]HasChanges(){ return ($this.Props -ne $null -and $this.Props.HasChanges()) -or ($this.SubProps -ne $null -and $this.SubProps.HasChanges()) -or ($this.SubObjects -ne $null -and $this.SubObjects.HasChanges()) }
     [void]WriteXml([System.Xml.XmlTextWriter]$w){
         if($this.HasChanges()){
               $w.WriteStartElement($this.Name)
