@@ -163,7 +163,7 @@ Class Synfo{
         $wcoRes = [CRO]::Compare($refSyn.SysProps,$cmpSyn.SysProps)        
         $w.WriteAttributeString("hasChanges",$wcoRes.HasChanges())
         $wcoRes.WriteXml($w)
-        foreach($wcc in $refSyn.WCObjects){
+        foreach($wcc in $refSyn.WCObjects.Values){            
             $wccRes = [CRC]::Compare($wcc,$cmpSyn.WCObjects[$wcc.Name])
             $wccRes.WriteXml($w)
         }
@@ -265,11 +265,11 @@ Class WCO:WC{
 }
 
 #Changed Window Component object
-Class WCODiff{
+Class CRDO{
     [string]$Name
     [WCO]$OldValue
     [WCO]$NewValue
-    WCPDiff($name,$old,$new){
+    CRDO($name,$old,$new){
         $this.Name = $name
         $this.OldValue = $old
         $this.NewValue = $new
@@ -415,8 +415,9 @@ Class CRO:CR{
             $ccr = [CRC]::new($refWco.SubObjects.Name)
             foreach($wco in $refWco.SubObjects.Members.Values){
                 if($cmpWco.SubObjects.Members.ContainsKey($wco.Id)){
-                    $ccro = [CRO]::Compare($wco,$cmpWco.SubObjects.Members[$wco.Id])
-                    if($ccro.HasChanges()){$ccr.Changed.Add($ccro.Id,$ccro)}                    
+                    $rco = $cmpWco.SubObjects.Members[$wco.Id]
+                    $ccro = [CRO]::Compare($wco,$rco)
+                    if($ccro.HasChanges()){$ccr.Changed.Add($ccro.Id,[CRDO]::new($wco.Id,$wco,$rco))}                    
                 }else{
                     $ccr.Deleted.Add($wco.Id,$wco)
                 }
