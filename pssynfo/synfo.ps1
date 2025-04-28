@@ -4,7 +4,7 @@ Class Synfo{
     hidden static [string]$ConfigXml = "$global:PSScriptRoot\synfo.xml"
     [WCO]$SysProps = $null  #WCO info
     $WCObjects = @{}   #WCC coll
-    [string]$xmlPath = "$PSScriptRoot\synfo_$($env:COMPUTERNAME)_$((Get-Date).ToString("yyyymmddHHMMss")).xml"
+    [string]$xmlPath = "$global:PSScriptRoot\synfo_$($env:COMPUTERNAME)_$((Get-Date).ToString("yyyymmddHHMMss")).xml"
     Synfo(){
         if(!(Test-Path $([Synfo]::ConfigXml))){   [Text.Encoding]::Utf8.GetString([Convert]::FromBase64String([Synfo]::_DEFCFG)) | Out-File $([Synfo]::ConfigXml) -Encoding utf8  }
         [xml]$xml = gc $([Synfo]::ConfigXml)
@@ -159,7 +159,7 @@ Class Synfo{
         if($refSynfo.SysProps.Id -eq $cmpSynfo.SysProps.Id){ $cMode = "diff_$($refSynfo.SysProps.Id)-$($cmpSynfo.SysProps.Id)" }
         else{ $cMode = "xcmp_$($refSynfo.SysProps.Id)-$($cmpSynfo.SysProps.Id)" }
 
-        $resXml = "$PSScriptRoot\synfo_$($cMode)_$((Get-Date).ToString("yyyymmddHHMMss")).xml"
+        $resXml = "$global:PSScriptRoot\synfo_$($cMode)_$((Get-Date).ToString("yyyymmddHHMMss")).xml"
         $w = [System.Xml.XmlTextWriter]::new($resXml, [Text.Encoding]::UTF8)
         $w.Formatting = [System.Xml.Formatting]::Indented
         $w.WriteStartDocument()
@@ -472,6 +472,6 @@ Class CRC:CR{
 #sample usage
 #[Synfo]::Dump()
 
-[Synfo]::Compare("$PSScriptRoot\sample1.xml","$PSScriptRoot\sample2.xml")
+[Synfo]::Compare("$global:PSScriptRoot\sample1.xml","$global:PSScriptRoot\sample2.xml")
 
 
