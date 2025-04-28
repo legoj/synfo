@@ -4,7 +4,7 @@ Class Synfo{
     hidden static [string]$ConfigXml = "$global:PSScriptRoot\synfo.xml"
     [WCO]$SysProps = $null  #WCO info
     $WCObjects = @{}   #WCC coll
-    [string]$xmlPath = "$global:PSScriptRoot\synfo_$($env:COMPUTERNAME)_$((Get-Date).ToString("yyyymmddHHMMss")).xml"
+    [string]$XmlPath = "$global:PSScriptRoot\synfo_$($env:COMPUTERNAME)_$((Get-Date).ToString("yyyymmddHHMMss")).xml"
     Synfo(){
         if(!(Test-Path $([Synfo]::ConfigXml))){   [Text.Encoding]::Utf8.GetString([Convert]::FromBase64String([Synfo]::_DEFCFG)) | Out-File $([Synfo]::ConfigXml) -Encoding utf8  }
         [xml]$xml = gc $([Synfo]::ConfigXml)
@@ -27,10 +27,10 @@ Class Synfo{
             if($ch.HasAttribute("count")){    $wc = [WCC]::ParseXml($ch); $this.WCObjects.Add($wc.Name,$wc) }
             elseif($ch.LocalName -eq "info"){ $this.SysProps = [WCO]::ParseXml($ch) }
         }
-        $this.xmlPath = $synfoXml    
+        $this.XmlPath = $synfoXml    
     }
     [string]Save(){
-        $w = [System.Xml.XmlTextWriter]::new($this.xmlPath, [Text.Encoding]::UTF8)
+        $w = [System.Xml.XmlTextWriter]::new($this.XmlPath, [Text.Encoding]::UTF8)
         $w.Formatting = [System.Xml.Formatting]::Indented
         $w.WriteStartDocument()
         $w.WriteStartElement("synfo")
@@ -39,10 +39,9 @@ Class Synfo{
         $w.WriteEndElement()
         $w.WriteEndDocument()
         $w.Close()
-        return $this.xmlPath
+        return $this.XmlPath
     }
     [string]Compare([string]$refXml){ return [Synfo]::Compare([Synfo]::new($refXml),$this)  }
-
     hidden static [WCO]ReadComputerInfo([System.Xml.XmlElement]$xml){
         Write-Host "Dumping System Info"
         $wcoSys = [WCO]::new($xml.LocalName,$env:COMPUTERNAME)
@@ -151,24 +150,21 @@ Class Synfo{
         }
         return $p
     }
-
     static [string]Dump(){ return ([Synfo]::new()).Save() }
     static [string]Compare([string]$refXml,[string]$cmpXml){ return [Synfo]::Compare([Synfo]::new($refXml),[Synfo]::new($cmpXml)) }
     static [string]Compare([Synfo]$refSynfo,[Synfo]$cmpSynfo){
-        $cMode = "xcmp"
-        if($refSynfo.SysProps.Id -eq $cmpSynfo.SysProps.Id){ $cMode = "diff_$($refSynfo.SysProps.Id)-$($cmpSynfo.SysProps.Id)" }
-        else{ $cMode = "xcmp_$($refSynfo.SysProps.Id)-$($cmpSynfo.SysProps.Id)" }
-
+        $cMode = "diff_$($refSynfo.SysProps.Id)-$($cmpSynfo.SysProps.Id)"
+        if($refSynfo.SysProps.Id -ne $cmpSynfo.SysProps.Id){ $cMode = "xcmp_$($refSynfo.SysProps.Id)-$($cmpSynfo.SysProps.Id)" }
         $resXml = "$global:PSScriptRoot\synfo_$($cMode)_$((Get-Date).ToString("yyyymmddHHMMss")).xml"
         $w = [System.Xml.XmlTextWriter]::new($resXml, [Text.Encoding]::UTF8)
         $w.Formatting = [System.Xml.Formatting]::Indented
         $w.WriteStartDocument()
         $w.WriteStartElement("synfo")
         $w.WriteStartElement("ref")
-        $w.WriteAttributeString("path",$refSynfo.xmlPath)
+        $w.WriteAttributeString("path",$refSynfo.XmlPath)
         $w.WriteEndElement()
         $w.WriteStartElement("cmp")
-        $w.WriteAttributeString("path",$cmpSynfo.xmlPath)
+        $w.WriteAttributeString("path",$cmpSynfo.XmlPath)
         $w.WriteEndElement()
         $w.WriteStartElement("result")
         $wcoRes = [CRO]::Compare($refSynfo.SysProps,$cmpSynfo.SysProps)        
@@ -181,19 +177,16 @@ Class Synfo{
         $w.WriteEndElement() #result
         $w.WriteEndElement()
         $w.WriteEndDocument()
-        $w.Close()       
+        $w.Close()
         return $resXml
     }
-
 }
-
 #WindowsComponent class
 Class WC{
     [string]$Name
     [Hashtable]$Members=@{} 
     WC([string]$name){$this.Name=$name}
 }
-
 #WindowsComponent object collection class
 Class WCC:WC{
     WCC([string]$name):base($name){}
@@ -213,7 +206,6 @@ Class WCC:WC{
         return $wc
     }
 }
-
 #WindowsComponent object class
 Class WCO:WC{
     [string]$Id
@@ -257,7 +249,6 @@ Class WCO:WC{
         return $wc
     }
 }
-
 #Changed Window Component object
 Class CRDO{
     [string]$Name
@@ -280,7 +271,6 @@ Class CRDO{
         $w.WriteEndElement()        
     }
 }
-
 #Changed Window Component prop
 Class CRDP{
     [string]$Name
@@ -303,7 +293,6 @@ Class CRDP{
         $w.WriteEndElement()        
     }
 }
-
 #Compare Result base class
 Class CR{
     [string]$Name  #id or type
@@ -316,6 +305,7 @@ Class CR{
     [bool]HasDelItem(){ return $this.Deleted.Count -gt 0}
     [bool]HasChanges(){ return $this.HasNewItem() -or $this.HasModItem() -or $this.HasDelItem()  }
 }
+#Compare Result 
 Class CRP:CR{
     CRP([string]$name):base($name){}
     [void]AddModProp([string]$name,[string]$oldVal,[string]$newVal){$this.Changed.Add($name,[CRDP]::new($name,$oldVal,$newVal))}
@@ -363,7 +353,6 @@ Class CRP:CR{
         return $cmpRes
     }
 }
-
 #Compare Result Object class
 Class CRO:CR{
     [string]$Id
@@ -423,7 +412,6 @@ Class CRO:CR{
         return $ocr
     }
 }
-
 #Compare Result Collection class
 Class CRC:CR{
     CRC([string]$name):base($name){}    
@@ -468,10 +456,8 @@ Class CRC:CR{
     }
 }
 
-
 #sample usage
 #[Synfo]::Dump()
-
 [Synfo]::Compare("$global:PSScriptRoot\sample1.xml","$global:PSScriptRoot\sample2.xml")
 
 
