@@ -69,9 +69,17 @@ Class Synfo{
 
         $col =  $wi.GetType().InvokeMember('Products', [System.Reflection.BindingFlags]::GetProperty, $null, $wi, $null)
         foreach($swp in $col){
+            $noe = $true #no error i.e. msi db is complete
             $wco = [WCO]::new($obj,$swp)
             Write-Host "WCO.$obj - $swp"
-            foreach($p in $prd){  $wco.AddProp($p,$wi.ProductInfo($swp, $p))  }
+            foreach($p in $prd){
+                try{
+                    $wco.AddProp($p,$wi.ProductInfo($swp, $p))
+                }catch{
+                    $noe = $false 
+                    Write-Error "`t$swp - $p exception occurred!"
+                }
+            }
             $pat = $wi.PatchesEx($swp,"",4,15)
             if($pat.Count() -gt 0){
                 $pcc = [WCC]::new("patches")
@@ -88,7 +96,7 @@ Class Synfo{
                 }
                 $wco.SubObjects = $pcc
             }
-            $wcc.Members.Add($wco.Id,$wco)
+            if($noe){$wcc.Members.Add($wco.Id,$wco)}
         }
         return $wcc
     }
@@ -457,7 +465,7 @@ Class CRC:CR{
 }
 
 #sample usage
-#[Synfo]::Dump()
-[Synfo]::Compare("$global:PSScriptRoot\sample1.xml","$global:PSScriptRoot\sample2.xml")
+[Synfo]::Dump()
+#[Synfo]::Compare("$global:PSScriptRoot\sample1.xml","$global:PSScriptRoot\sample2.xml")
 
 
