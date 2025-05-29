@@ -1,4 +1,20 @@
 # synfo
+
+## update!!!
+the tool has been ported to powershell to ease updates. please see the psynfo folder
+
+**Usage:**
+* to dump the system info, invoke the static method *Dump()* of the **Synfo** class
+```
+[Synfo]::Dump()
+```
+
+* to compare the dumped Synfo xml files, use the static method *Compare()* and specify the XML file paths
+```
+[Synfo]::Compare("$global:PSScriptRoot\sample1.xml","$global:PSScriptRoot\sample2.xml")
+```
+
+### deprecated
 Utility to dump and compare system info (computer properties, environment variables, services, system drivers and updates, as well as the installed products and the patches applied to them)
 
 **Usage:**
