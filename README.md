@@ -1,7 +1,8 @@
 # synfo
 
 ## update!!!
-the tool has been ported to powershell to ease updates. please see the ***\pssynfo*** folder
+the tool has been ported to powershell to ease updates. please see the ***\pssynfo*** folder.
+note that the PatchCode property of a patch is not available from powershell invocation. it is possible to load and get the info from the MSP file but this slow down the process; especially from within powershell runtime.
 
 **Usage:**
 * to dump the system info, invoke the static method *Dump()* of the **Synfo** class
