@@ -1,7 +1,7 @@
 # synfo
 
 ## update!!!
-the tool has been ported to powershell to ease updates. please see the psynfo folder
+the tool has been ported to powershell to ease updates. please see the ***\pssynfo*** folder
 
 **Usage:**
 * to dump the system info, invoke the static method *Dump()* of the **Synfo** class
