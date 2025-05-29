@@ -387,9 +387,9 @@ Class CRO:CR{
               }
               if($this.SubObjects -ne $null){
                  if($this.SubObjects.HasChanges()){
-                    $w.WriteStartElement($this.Id)
+                    #$w.WriteStartElement($this.Id)
                     $this.SubObjects.WriteXml($w)
-                    $w.WriteEndElement()
+                    #$w.WriteEndElement()
                 }               
               }
               $w.WriteEndElement()
